@@ -1864,10 +1864,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 1223845878}
-  walkSpeed: 2
+  walkSpeed: 3
   sprintSpeed: 6
   jumpHeight: 2
-  gravity: -4
+  gravity: -50
+  jumpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpDuration: 0.35
 --- !u!4 &376595918
 Transform:
   m_ObjectHideFlags: 0
@@ -1931,8 +1956,8 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &376595923
-SphereCollider:
+--- !u!65 &376595923
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1950,8 +1975,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1.6452827
-  m_Center: {x: -0.11463547, y: 0, z: 0}
+  m_Size: {x: 0.80133057, y: 0.5765705, z: 0.889698}
+  m_Center: {x: -0.041267395, y: -0.8575411, z: -0.0044345856}
 --- !u!1001 &386802671
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11001,13 +11026,17 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4414871117303439920, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439921, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_Name
       value: minotaur1
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 76.943
+      value: 77.19
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -11015,7 +11044,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 40.797
+      value: 44.06
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalRotation.w
