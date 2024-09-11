@@ -1,15 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    //enemy profile:
     public int HP = 100;
 
-
-    //State Machine:
     public enum EnemyState
     {
         NormalState,
@@ -24,13 +19,12 @@ public class Enemy : MonoBehaviour
 
     public float restTime = 2;
     private float restTimer = 0;
-    // Start is called before the first frame update
+
     void Start()
     {
         enemyAgent = GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (currentState == EnemyState.NormalState)
@@ -73,19 +67,40 @@ public class Enemy : MonoBehaviour
         HP -= damage;
         if (HP <= 0)
         {
+            // Disable enemy's collider to prevent further interactions
             GetComponent<Collider>().enabled = false;
-            int count = Random.Range(1, 4);
-            for (int i = 0; i < count; i++)
-            {
-                ItemSO item = ItemDBManager.Instance.GetRandomItem();
-                GameObject go = GameObject.Instantiate(item.prefab, transform.position, Quaternion.identity);
-                go.tag = Tag.INTERACTABLE;
 
+            // Drop items when enemy dies
+            DropLoot();
+
+            // Destroy the enemy GameObject
+            Destroy(gameObject);
+        }
+    }
+
+    private void DropLoot()
+    {
+        int count = Random.Range(1, 4); // Number of items to drop
+        for (int i = 0; i < count; i++)
+        {
+            // Get a random item from the database
+            ItemSO item = ItemDBManager.Instance.GetRandomItem();
+
+            if (item != null && item.prefab != null)
+            {
+                // Instantiate the item prefab
+                GameObject go = Instantiate(item.prefab, transform.position, Quaternion.identity);
+
+                // Set tag for the item (assuming Tag.INTERACTABLE is a defined tag in your project)
+                go.tag = "Interactable";
+
+                // Add PickableObject component and configure it
                 PickableObject po = go.AddComponent<PickableObject>();
                 po.itemSO = item;
-            }
 
-            Destroy(this.gameObject);
+                // Optionally, add the item to the player's inventory here if desired
+                // This step is usually handled when the player picks up the item.
+            }
         }
     }
 }

@@ -1,12 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PickableObject : InteractableObject
+public class PickableObject : MonoBehaviour
 {
-    public ItemSO itemSO;
-    protected override void Interact()
+    public ItemSO itemSO; // Reference to the ItemSO scriptable object
+
+    void OnTriggerEnter(Collider other)
     {
-        print("Interacting with pickable items");
+        // Check if the collider belongs to an object with the PlayerController component
+        PlayerController playerController = other.GetComponent<PlayerController>();
+
+        if (playerController != null)
+        {
+            // Debug log to confirm collision detection
+            Debug.Log("Item collided with player.");
+
+            // Add item to the player's inventory
+            PickupItem(playerController.gameObject);
+        }
+    }
+
+    void PickupItem(GameObject player)
+    {
+        // Example: Adding the item to the player's inventory
+        InventoryManager inventory = InventoryManager.Instance;
+        if (inventory != null)
+        {
+            inventory.AddItem(itemSO);
+            // Optionally, you might want to play a sound or animation here
+            Destroy(gameObject); // Destroy the item after picking up
+        }
+        else
+        {
+            Debug.LogWarning("InventoryManager instance not found.");
+        }
     }
 }
