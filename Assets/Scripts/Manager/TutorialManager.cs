@@ -1,52 +1,56 @@
 using UnityEngine;
-using TMPro;  // Import the TextMeshPro namespace for handling TextMeshProUGUI elements
+using UnityEngine.UI;  // Required for UI elements like buttons
 
 public class TutorialManager : MonoBehaviour
 {
-    public GameObject tutorialPanel;        // Reference to the tutorial panel
-    public TextMeshProUGUI tutorialText;    // Reference to the tutorial TextMeshProUGUI (showing 'H - Tutorial')
-    public TextMeshProUGUI escapeText;      // Reference to the escape TextMeshProUGUI (showing 'Esc - Close')
-    public Camera playerCamera;            // Reference to the player camera (optional)
+    public GameObject tutorialPanel;   // Reference to the tutorial UI panel
+    public GameObject imageWithText;   // Reference to the image with text (that you want to hide/show)
+    public Button closeButton;         // Reference to the Close button in the tutorial
+
+    private bool isTutorialOpen = false;
 
     void Start()
     {
-        // Ensure the tutorial panel and texts are initially inactive
+        // Ensure the tutorial and image are in the correct initial state
         tutorialPanel.SetActive(false);
-        tutorialText.gameObject.SetActive(true);  // Show the tutorial text box at the start
-        escapeText.gameObject.SetActive(false);   // Hide the escape text box at the start
+        imageWithText.SetActive(true);  // Show the image initially
+
+        // Lock and hide the cursor initially
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // Add a listener to the Close button so that it calls CloseTutorial when clicked
+        closeButton.onClick.AddListener(CloseTutorial);
     }
 
     void Update()
     {
-        // Check if the 'H' key is pressed to show the tutorial
-        if (Input.GetKeyDown(KeyCode.H))
+        // Toggle tutorial menu with the 'T' key (can be removed if not needed)
+        if (Input.GetKeyDown(KeyCode.T) && !isTutorialOpen)
         {
-            ShowTutorial();
-        }
-
-        // Check if the 'Esc' key is pressed to close the tutorial
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseTutorial();
+            OpenTutorial();
         }
     }
 
-    // Method to show the tutorial and update text visibility
-    void ShowTutorial()
+    public void OpenTutorial()
     {
-        if (playerCamera == null || playerCamera.gameObject.activeInHierarchy)
-        {
-            tutorialPanel.SetActive(true);
-            tutorialText.gameObject.SetActive(false);  // Hide the tutorial text box
-            escapeText.gameObject.SetActive(true);     // Show the escape text box
-        }
+        isTutorialOpen = true;
+        tutorialPanel.SetActive(true);
+        imageWithText.SetActive(false);  // Hide the image when tutorial is opened
+
+        // Enable the cursor for tutorial screen interaction
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
-    // Method to close the tutorial and update text visibility
-    void CloseTutorial()
+    public void CloseTutorial()
     {
+        isTutorialOpen = false;
         tutorialPanel.SetActive(false);
-        tutorialText.gameObject.SetActive(true);  // Show the tutorial text box
-        escapeText.gameObject.SetActive(false);   // Hide the escape text box
+        imageWithText.SetActive(true);  // Show the image when tutorial is closed
+
+        // Lock and hide the cursor when the tutorial is closed
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
