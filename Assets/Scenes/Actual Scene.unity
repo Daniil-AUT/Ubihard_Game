@@ -538,6 +538,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d746da7d99d8d2246b85fc5df47ea898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fillRectTransform: {fileID: 0}
+  maxHealth: 100
 --- !u!1 &113145459 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1085883031562116, guid: 957bb31991bce1640a18d0a109c71f3d, type: 3}
@@ -1291,8 +1293,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 100
+
+  detectionRange: 5
+
   speed: 2
   aggroDistance: 10
+
   restTime: 2
   enemyAgent: {fileID: 0}
   restTimer: 0
@@ -1405,6 +1411,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
+
   m_Radius: 2.209259
   m_Center: {x: -0.07331848, y: 1.0743942, z: -0.2605133}
 --- !u!114 &262151354
@@ -1416,6 +1423,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 262151342}
   m_Enabled: 1
   m_EditorHideFlags: 0
+
   m_Script: {fileID: 11500000, guid: 4e9a0a5d72f8a554cad7f8ba52a69c97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -1423,6 +1431,7 @@ MonoBehaviour:
   speed: 5
   aggroDistance: 10
   restTime: 2
+
 --- !u!1001 &289230055
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8851,6 +8860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f35e976160c2844580e85a1d0f9a79d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  
   tutorialPanel: {fileID: 1846848137}
   textInstances:
   - {fileID: 446863823}
@@ -9272,7 +9282,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &1576453995
 Canvas:
   m_ObjectHideFlags: 0
@@ -11081,7 +11091,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4414871117303439920, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439920, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_ApplyRootMotion
@@ -11152,7 +11162,9 @@ PrefabInstance:
       addedObject: {fileID: 262151351}
     - targetCorrespondingSourceObject: {fileID: 4414871117303439921, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       insertIndex: -1
+
       addedObject: {fileID: 262151354}
+
   m_SourcePrefab: {fileID: 100100000, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
 --- !u!1001 &1933863904
 PrefabInstance:

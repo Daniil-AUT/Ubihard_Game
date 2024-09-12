@@ -4,6 +4,11 @@ using UnityEngine.AI;
 public abstract class BaseEnemy : MonoBehaviour
 {
     public int HP = 100;
+
+    public float detectionRange = 5.0f;
+    private GameObject player;
+    public enum EnemyState
+
     public float speed = 5f;
     public float aggroDistance = 10f;
     public float restTime = 2f;
@@ -28,8 +33,9 @@ public abstract class BaseEnemy : MonoBehaviour
     private void Start()
     {
         enemyAgent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindWithTag("Player");
         animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        
         if (player == null)
         {
             Debug.LogError("Player object not found in the scene.");
@@ -45,6 +51,14 @@ public abstract class BaseEnemy : MonoBehaviour
 
     protected virtual void HandleMovement()
     {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+
+        if (distanceToPlayer <= detectionRange)
+        {
+            //currentState = EnemyState.FightingState;
+            enemyAgent.SetDestination(player.transform.position);
+        }
+
         if (currentState == EnemyState.NormalState)
         {
             if (childState == EnemyState.RestingState)
