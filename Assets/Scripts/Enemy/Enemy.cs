@@ -4,7 +4,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public int HP = 100;
-
+    public float detectionRange = 5.0f;
+    private GameObject player;
     public enum EnemyState
     {
         NormalState,
@@ -23,10 +24,19 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         enemyAgent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindWithTag("Player");
     }
 
     void Update()
     {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+
+        if (distanceToPlayer <= detectionRange)
+        {
+            //currentState = EnemyState.FightingState;
+            enemyAgent.SetDestination(player.transform.position);
+        }
+
         if (currentState == EnemyState.NormalState)
         {
             if (childState == EnemyState.RestingState)
