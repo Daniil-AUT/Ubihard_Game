@@ -1,20 +1,19 @@
 using UnityEngine;
-using TMPro;  // Import TextMeshPro namespace
-using UnityEngine.UI;  // For Button component
+using UnityEngine.UI;  // Required for UI elements like buttons
 
-public class TutorialManage : MonoBehaviour
+public class TutorialManager : MonoBehaviour
 {
-    public GameObject tutorialPanel;               // Reference to the tutorial UI panel
-    public TextMeshProUGUI[] textInstances;        // Array of TextMeshProUGUI components to hide/show
-    public Button closeButton;                     // Reference to the Close button in the tutorial
+    public GameObject tutorialPanel;   // Reference to the tutorial UI panel
+    public GameObject imageWithText;   // Reference to the image with text (that you want to hide/show)
+    public Button closeButton;         // Reference to the Close button in the tutorial
 
     private bool isTutorialOpen = false;
 
     void Start()
     {
-        // Ensure the tutorial and text instances are in the correct initial state
+        // Ensure the tutorial and image are in the correct initial state
         tutorialPanel.SetActive(false);
-        SetTextInstancesActive(true);  // Show all text instances initially
+        imageWithText.SetActive(true);  // Show the image initially
 
         // Lock and hide the cursor initially
         Cursor.lockState = CursorLockMode.Locked;
@@ -37,7 +36,7 @@ public class TutorialManage : MonoBehaviour
     {
         isTutorialOpen = true;
         tutorialPanel.SetActive(true);
-        SetTextInstancesActive(false);  // Hide all text instances when tutorial is opened
+        imageWithText.SetActive(false);  // Hide the image when tutorial is opened
 
         // Enable the cursor for tutorial screen interaction
         Cursor.lockState = CursorLockMode.None;
@@ -48,21 +47,10 @@ public class TutorialManage : MonoBehaviour
     {
         isTutorialOpen = false;
         tutorialPanel.SetActive(false);
-        SetTextInstancesActive(true);  // Show all text instances when tutorial is closed
+        imageWithText.SetActive(true);  // Show the image when tutorial is closed
 
         // Lock and hide the cursor when the tutorial is closed
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-    }
-
-    private void SetTextInstancesActive(bool isActive)
-    {
-        foreach (TextMeshProUGUI textInstance in textInstances)
-        {
-            if (textInstance != null)
-            {
-                textInstance.gameObject.SetActive(isActive);
-            }
-        }
     }
 }

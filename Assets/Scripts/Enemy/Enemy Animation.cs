@@ -6,41 +6,26 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     private Animator animator;
-    public bool IsRunning;
-    public bool IsAttacking;
+    public bool isWalking;
     private NavMeshAgent navMeshAgent;
-    private GameObject player;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindWithTag("Player");
     }
 
     void Update()
     {
         if (navMeshAgent.velocity.sqrMagnitude > 0.01f)
         {
-            IsRunning = true;
+            isWalking = true;
         }
         else
         {
-            IsRunning = false;
+            isWalking = false;
         }
 
-        animator.SetBool("IsRunning", IsRunning);
-
-        if (Vector3.Distance(transform.position, player.transform.position) <= 1.5f)
-        {
-            IsAttacking = true;
-            IsRunning = false;
-        }
-        else
-        {
-            IsAttacking = false;
-        }
-
-        animator.SetBool("IsAttacking", IsAttacking);
+        animator.SetBool("isWalking", isWalking);
     }
 }
