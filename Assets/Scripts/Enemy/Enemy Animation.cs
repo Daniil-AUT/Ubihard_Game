@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     private Animator animator;
-    public bool isWalking;
+    public bool IsRunning;
     private NavMeshAgent navMeshAgent;
 
     void Start()
@@ -19,13 +19,13 @@ public class EnemyController : MonoBehaviour
     {
         if (navMeshAgent.velocity.sqrMagnitude > 0.01f)
         {
-            isWalking = true;
+            IsRunning = true;
         }
         else
         {
-            isWalking = false;
+            IsRunning = false;
         }
 
-        animator.SetBool("isWalking", isWalking);
+        animator.SetBool("IsRunning", IsRunning);
     }
 }
