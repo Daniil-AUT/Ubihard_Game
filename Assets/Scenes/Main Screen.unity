@@ -786,6 +786,8 @@ GameObject:
   - component: {fileID: 1180035560}
   - component: {fileID: 1180035559}
   - component: {fileID: 1180035561}
+  - component: {fileID: 1180035562}
+  - component: {fileID: 1180035563}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -830,12 +832,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1180035558}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dc2533dedee6f54ab235089ff1c0778, type: 3}
+  m_Script: {fileID: 11500000, guid: 256740a093acb7e4ca4b5e0ee057e4c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startButton: {fileID: 1535382415}
   quitButton: {fileID: 841520596}
   optionsButton: {fileID: 402049563}
+--- !u!114 &1180035562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180035558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e89b504f4dcc9419d98674c4af2639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  previewSceneName: PreviewScene
+--- !u!114 &1180035563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180035558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e63f63c4f9d0f342a0839fb2dd8b2df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rawImage: {fileID: 2133850210}
+  previewSceneName: Preview Scene
 --- !u!1 &1413326967
 GameObject:
   m_ObjectHideFlags: 0
