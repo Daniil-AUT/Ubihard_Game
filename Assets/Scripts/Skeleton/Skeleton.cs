@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Skeleton : BaseEnemy
+public class Skeleton : Enemy
 {
     protected override void DropLoot()
     {
