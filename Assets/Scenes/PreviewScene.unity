@@ -1495,11 +1495,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 441747729}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db5c984725dd4dc4ba68de2d5c106bbb, type: 3}
+  m_Script: {fileID: 11500000, guid: fb7c8f3a367587e4ea31d3f50216716c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 2
-  delay: 1
+  rotationSpeed: 30
+  delay: 2
 --- !u!1001 &468995468
 PrefabInstance:
   m_ObjectHideFlags: 0
