@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayRenderTexture : MonoBehaviour
+public class DisplayTexture : MonoBehaviour
 {
     public RawImage rawImage;
     public string previewSceneName = "Preview Scene";
