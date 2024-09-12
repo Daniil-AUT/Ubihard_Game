@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
     private Animator anim;
 
-    Vector2 movement;
+    public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
     bool sprinting;
@@ -21,7 +21,8 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
     bool canJump = true;
     bool isJumping = false;
-    Vector3 velocity;
+    public Vector3 velocity;
+    public bool isDodging = false;
 
     float jumpTime;
     public float jumpDuration = 1f;
@@ -48,6 +49,8 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("IsJumping", false); // End jumping
         }
 
+        if(!isDodging) {
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             currentSpeed = sprintSpeed;
@@ -59,6 +62,11 @@ public class PlayerController : MonoBehaviour
             currentSpeed = walkSpeed;
             sprinting = false;
         }
+        }
+        else {
+             currentSpeed = walkSpeed; 
+        }
+
 
         movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector3 direction = new Vector3(movement.x, 0, movement.y).normalized;
@@ -80,7 +88,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Handle jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging)
         {
             StartCoroutine(HandleJump());  // Start smooth jump
             anim.SetTrigger("Jump");  // Trigger jump animation
