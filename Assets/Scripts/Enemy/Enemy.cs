@@ -1,12 +1,25 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public abstract class BaseEnemy : MonoBehaviour
 {
     public int HP = 100;
+
     public float detectionRange = 5.0f;
     private GameObject player;
     public enum EnemyState
+
+    public float speed = 5f;
+    public float aggroDistance = 10f;
+    public float restTime = 2f;
+
+    protected NavMeshAgent enemyAgent;
+    protected float restTimer = 0f;
+    protected bool isPlayerInZone = false;
+    protected Transform player;
+    protected Animator animator;
+
+    private enum EnemyState
     {
         NormalState,
         FightingState,
@@ -16,18 +29,27 @@ public class Enemy : MonoBehaviour
 
     private EnemyState currentState = EnemyState.NormalState;
     private EnemyState childState = EnemyState.RestingState;
-    private NavMeshAgent enemyAgent;
 
-    public float restTime = 2;
-    private float restTimer = 0;
-
-    void Start()
+    private void Start()
     {
         enemyAgent = GetComponent<NavMeshAgent>();
         player = GameObject.FindWithTag("Player");
+        animator = GetComponent<Animator>();
+        
+        if (player == null)
+        {
+            Debug.LogError("Player object not found in the scene.");
+        }
     }
 
-    void Update()
+    private void Update()
+    {
+        HandleMovement();
+        HandleDamage();
+        UpdateNPCBehavior();
+    }
+
+    protected virtual void HandleMovement()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
@@ -42,7 +64,6 @@ public class Enemy : MonoBehaviour
             if (childState == EnemyState.RestingState)
             {
                 restTimer += Time.deltaTime;
-
                 if (restTimer > restTime)
                 {
                     Vector3 randomPosition = FindRandomPosition();
@@ -52,65 +73,109 @@ public class Enemy : MonoBehaviour
             }
             else if (childState == EnemyState.MovingState)
             {
-                if (enemyAgent.remainingDistance <= 0)
+                if (enemyAgent.remainingDistance <= enemyAgent.stoppingDistance)
                 {
-                    restTime = 0;
+                    restTimer = 0f;
                     childState = EnemyState.RestingState;
                 }
             }
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+    protected virtual void HandleDamage()
+    {
+        if (isPlayerInZone && Input.GetKeyDown(KeyCode.Z))
         {
             TakeDamage(30);
         }
     }
 
-    Vector3 FindRandomPosition()
+    protected virtual Vector3 FindRandomPosition()
     {
-        Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
-        return transform.position + randomDir.normalized * Random.Range(2, 5);
+        Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+        return transform.position + randomDir.normalized * Random.Range(2f, 5f);
     }
 
     public void TakeDamage(int damage)
     {
         HP -= damage;
+        Debug.Log($"Enemy took {damage} damage. Remaining HP: {HP}");
+
         if (HP <= 0)
         {
-            // Disable enemy's collider to prevent further interactions
-            GetComponent<Collider>().enabled = false;
-
-            // Drop items when enemy dies
-            DropLoot();
-
-            // Destroy the enemy GameObject
-            Destroy(gameObject);
+            Die(); // Ensure Die is called for proper cleanup
         }
     }
 
-    private void DropLoot()
+    protected virtual void Die()
     {
-        int count = Random.Range(1, 4); // Number of items to drop
-        for (int i = 0; i < count; i++)
+        GetComponent<Collider>().enabled = false;
+        DropLoot(); // Call DropLoot on death
+        Destroy(gameObject); // Destroy the enemy
+    }
+
+    protected abstract void DropLoot(); // Abstract method to be implemented by derived classes
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            // Get a random item from the database
-            ItemSO item = ItemDBManager.Instance.GetRandomItem();
+            isPlayerInZone = true;
+        }
+    }
 
-            if (item != null && item.prefab != null)
-            {
-                // Instantiate the item prefab
-                GameObject go = Instantiate(item.prefab, transform.position, Quaternion.identity);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerInZone = false;
+        }
+    }
 
-                // Set tag for the item (assuming Tag.INTERACTABLE is a defined tag in your project)
-                go.tag = "Interactable";
+    private void UpdateNPCBehavior()
+    {
+        if (player == null) return; // Prevent errors if player is not found
 
-                // Add PickableObject component and configure it
-                PickableObject po = go.AddComponent<PickableObject>();
-                po.itemSO = item;
+        float distance = Vector3.Distance(transform.position, player.position);
+        bool isAggro = distance <= aggroDistance;
 
-                // Optionally, add the item to the player's inventory here if desired
-                // This step is usually handled when the player picks up the item.
-            }
+        UpdateAnimation(isAggro);
+
+        FacePlayer();
+
+        if (isAggro)
+        {
+            MoveTowardsPlayer();
+        }
+    }
+
+    protected virtual void MoveTowardsPlayer()
+    {
+        if (player == null) return; // Prevent errors if player is not found
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance > 1.5f)
+        {
+            Vector3 direction = (player.position - transform.position).normalized;
+            transform.position += direction * speed * Time.deltaTime;
+        }
+    }
+
+    protected virtual void FacePlayer()
+    {
+        if (player == null) return; // Prevent errors if player is not found
+
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        directionToPlayer.y = 0f;
+        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+    }
+
+    protected virtual void UpdateAnimation(bool isWalking)
+    {
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", isWalking);
         }
     }
 }
