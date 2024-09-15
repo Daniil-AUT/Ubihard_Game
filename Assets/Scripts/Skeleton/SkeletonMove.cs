@@ -2,63 +2,63 @@ using UnityEngine;
 
 public class SkeletonFollow : MonoBehaviour
 {
-    public Transform player;              // Reference to the player’s transform
-    public float speed = 5f;              // Speed of the NPC
-    public float aggroDistance = 10f;     // Distance within which the NPC starts moving
+    public Transform player;              // Reference to the Player
+    public float speed = 5f;              // NPC speed
+    public float aggroDistance = 10f;     // Aggro radius
 
-    private Animator animator;            // Reference to the Animator component
+    private Animator animator;            // Animator for animation control
 
     void Start()
     {
-        // Get the Animator component attached to this GameObject
+        // Create Animator 
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // Calculate the distance between the NPC and the player
+        // Check distance between NPC and player
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // Check if the NPC is within the aggro distance
+        // Check player is in aggro range
         bool isAggro = distance <= aggroDistance;
 
-        // Update animation based on NPC state
+        // Update animation based on agrro boolean
         UpdateAnimation(isAggro);
 
-        // Always face the player
+        // Call function for NPC to face player
         FacePlayer();
 
-        // Move the NPC towards the player if within aggro distance
+        // NPC to the player if in aggro range
         if (isAggro)
         {
             MoveTowardsPlayer();
         }
     }
 
+    // NPC movement towards player
     void MoveTowardsPlayer()
     {
-        // Calculate the distance between the NPC and the player
-        float distance = Vector3.Distance(transform.position, player.position);
 
-        // Move the NPC towards the player if beyond the stopping distance
-        if (distance > 1.5f)  // Adjust the stopping distance as needed
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance > 1.5f)  
         {
             Vector3 direction = (player.position - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
         }
     }
 
+    // NPC always facing the player
     void FacePlayer()
     {
-        // Calculate direction to the player
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        directionToPlayer.y = 0;  // Keep the NPC upright (don't tilt forward/backward)
+        directionToPlayer.y = 0; 
 
-        // Rotate the NPC to face the player smoothly
+        // Rotate NPC to face the player
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // 5f is the rotation speed
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
+    // Update animtation based on the IsWalking variable
     void UpdateAnimation(bool isWalking)
     {
         if (animator != null)
