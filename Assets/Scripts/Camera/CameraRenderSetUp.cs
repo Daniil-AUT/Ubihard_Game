@@ -4,6 +4,7 @@ public class CameraRenderSetUp : MonoBehaviour
 {
     public RenderTexture renderTexture;
 
+    // used to render camera view to a texture to show a preview of game
     void Start()
     {
         Camera camera = GetComponent<Camera>();
@@ -13,7 +14,7 @@ public class CameraRenderSetUp : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Camera or RenderTexture not assigned.");
+            Debug.LogError("no camera - can't see the view");
         }
     }
 }

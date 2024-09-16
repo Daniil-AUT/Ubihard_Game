@@ -2,41 +2,39 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public HealthBar healthBar;  // Reference to the HealthBar script
-    public float playerHealth = 100f; // Player's starting health
-    private bool isInvincible = false; // Boolean to check if player is invincible
+    public HealthBar healthBar;  
+    public float playerHealth = 100f; 
+    private bool isInvincible = false; 
 
     void Start()
     {
-        // Initialize the health bar
         healthBar.maxHealth = playerHealth;
-        healthBar.CurrentHealth = playerHealth; // Initialize health bar to match starting health
+        healthBar.CurrentHealth = playerHealth;
     }
-
+    
     void Update()
     {
-        // Check if the 'Z' key is pressed to inflict damage
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.M))
         {
-            TakeDamage(5f);  // Inflict 5 damage
+            TakeDamage(5f);
         }
     }
 
-    // Method to take damage and update health
+    // take damage based on whether the player is invincible or not
     void TakeDamage(float damage)
     {
-        if (!isInvincible) // Check if player is not invincible
+        if (!isInvincible) 
         {
-            playerHealth -= damage; // Reduce player's health
-            if (playerHealth < 0)   // Clamp health to not go below 0
+        // take 5 damage if not and update health after
+            playerHealth -= damage; 
+            if (playerHealth < 0)   
             {
                 playerHealth = 0;
             }
-            healthBar.CurrentHealth = playerHealth; // Update health bar
+            healthBar.CurrentHealth = playerHealth;
         }
     }
-
-    // Method to set invincibility status
+    // set the player to be invincible based on certain condition
     public void SetInvincible(bool invincible)
     {
         isInvincible = invincible;
