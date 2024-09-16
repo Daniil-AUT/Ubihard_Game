@@ -1,60 +1,56 @@
 using UnityEngine;
-using TMPro;  // Import TextMeshPro namespace
-using UnityEngine.UI;  // For Button component
+using TMPro;  
+using UnityEngine.UI;
 
 public class TutorialManage : MonoBehaviour
 {
-    public GameObject tutorialPanel;               // Reference to the tutorial UI panel
-    public TextMeshProUGUI[] textInstances;        // Array of TextMeshProUGUI components to hide/show
-    public Button closeButton;                     // Reference to the Close button in the tutorial
+    // Reference the tutorial panel where content is hel
+    public GameObject tutorialPanel;               
+    public TextMeshProUGUI[] textInstances;        
+    public Button closeButton;              
 
+    // Set tutorial panel visibility to inviisble
     private bool isTutorialOpen = false;
 
     void Start()
     {
-        // Ensure the tutorial and text instances are in the correct initial state
         tutorialPanel.SetActive(false);
-        SetTextInstancesActive(true);  // Show all text instances initially
-
-        // Lock and hide the cursor initially
+        SetTextInstancesActive(true); 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        // Add a listener to the Close button so that it calls CloseTutorial when clicked
         closeButton.onClick.AddListener(CloseTutorial);
     }
 
     void Update()
     {
-        // Toggle tutorial menu with the 'T' key (can be removed if not needed)
+        // If the player presses T, the tutorial panel ui will open
         if (Input.GetKeyDown(KeyCode.T) && !isTutorialOpen)
         {
             OpenTutorial();
         }
     }
 
+    // Handle logic for opening a tutorial like unlocking a mouse and making contents visible
     public void OpenTutorial()
     {
         isTutorialOpen = true;
         tutorialPanel.SetActive(true);
-        SetTextInstancesActive(false);  // Hide all text instances when tutorial is opened
-
-        // Enable the cursor for tutorial screen interaction
+        SetTextInstancesActive(false);  
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
+    // Vice-versa logic as for the OpenTutorial
     public void CloseTutorial()
     {
         isTutorialOpen = false;
         tutorialPanel.SetActive(false);
-        SetTextInstancesActive(true);  // Show all text instances when tutorial is closed
-
-        // Lock and hide the cursor when the tutorial is closed
+        SetTextInstancesActive(true);  
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
+    // Manage visibility of the UI
     private void SetTextInstancesActive(bool isActive)
     {
         foreach (TextMeshProUGUI textInstance in textInstances)
