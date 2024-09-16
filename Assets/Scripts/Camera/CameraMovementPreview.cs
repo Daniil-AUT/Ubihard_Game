@@ -2,43 +2,34 @@ using UnityEngine;
 
 public class CameraHorizontalRotation : MonoBehaviour
 {
-    public float rotationSpeed = 30f; 
-    public float delay = 2f; 
+    public float rotationSpeed = 1;
 
-    private Quaternion startRotation; 
-    private Quaternion endRotation; 
-    private bool rotatingToEnd = true; 
-    private float rotationProgress = 0f; 
+    private Quaternion startRotation;
+    private Quaternion endRotation;
+    private bool rotatingToEnd = true;
+    private float rotationProgress = 0f;
 
     void Start()
-    { 
-        // get the end rotation 
+    {
+        // canera will rotate horizontally 30 degrees to the right and then to left (loops)
         startRotation = transform.rotation;
-        endRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, 45, 0));
+        endRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, 30, 0));
     }
-    
+
+    // Needed some assistance with the physics of the camera so I used this link
+    // https://vionixstudio.com/2022/06/16/unity-quaternion-and-rotation-guide/
     void Update()
     {
-        Quaternion targetRotation = rotatingToEnd ? endRotation : startRotation;
-        // rotate between start and end rotation based on speed
-        rotationProgress += rotationSpeed * Time.deltaTime;
-        float rotationFraction = Mathf.Clamp01(rotationProgress / 180f);
-        transform.rotation = Quaternion.Slerp(startRotation, targetRotation, rotationFraction);
+        Quaternion fromRotation = rotatingToEnd ? startRotation : endRotation;
+        Quaternion toRotation = rotatingToEnd ? endRotation : startRotation;
 
-        // if roation completes then reset it to change direction
-        if (rotationFraction >= 1f)
+        rotationProgress += rotationSpeed * Time.deltaTime / 200f;
+        transform.rotation = Quaternion.Slerp(fromRotation, toRotation, rotationProgress);
+
+        if (rotationProgress >= 1f)
         {
             rotatingToEnd = !rotatingToEnd;
             rotationProgress = 0f;
-            if (rotatingToEnd)
-            {
-                Invoke(nameof(ResetRotationDelay), delay);
-            }
         }
-    }
-
-    void ResetRotationDelay()
-    {
-        // Delay handled by Invoke
     }
 }
