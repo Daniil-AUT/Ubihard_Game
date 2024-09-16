@@ -23,7 +23,7 @@ public class Skeleton : Enemy
             else
             {
                 // check if the items exits
-                Debug.LogWarning("no item"); /
+                Debug.LogWarning("no item"); 
             }
         }
     }
