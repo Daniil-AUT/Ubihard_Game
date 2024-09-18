@@ -4,6 +4,7 @@ public class Player : MonoBehaviour
 {
     public HealthBar healthBar;  // Reference to the HealthBar script
     public float playerHealth = 100f; // Player's starting health
+    private bool isInvincible = false; // Boolean to check if player is invincible
 
     void Start()
     {
@@ -24,11 +25,20 @@ public class Player : MonoBehaviour
     // Method to take damage and update health
     void TakeDamage(float damage)
     {
-        playerHealth -= damage; // Reduce player's health
-        if (playerHealth < 0)   // Clamp health to not go below 0
+        if (!isInvincible) // Check if player is not invincible
         {
-            playerHealth = 0;
+            playerHealth -= damage; // Reduce player's health
+            if (playerHealth < 0)   // Clamp health to not go below 0
+            {
+                playerHealth = 0;
+            }
+            healthBar.CurrentHealth = playerHealth; // Update health bar
         }
-        healthBar.CurrentHealth = playerHealth; // Update health bar
+    }
+
+    // Method to set invincibility status
+    public void SetInvincible(bool invincible)
+    {
+        isInvincible = invincible;
     }
 }
