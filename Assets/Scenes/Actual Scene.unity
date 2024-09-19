@@ -558,7 +558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.5812149
+      value: 17.55
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -566,7 +566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.4795723
+      value: 25.62
       objectReference: {fileID: 0}
     - target: {fileID: 4414871117303439923, guid: aef9a3e063e740f4d8100584de73ceb4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -967,21 +967,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &185578621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185578606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b501a322d924f94088c467e093333e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HP: 100
-  detectionRange: 5
-  restTime: 2
 --- !u!65 &185578622
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1003,6 +988,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.3302612, y: 2.4326344, z: 1.2796478}
   m_Center: {x: -0.0016098022, y: 0.71631706, z: -0.005117774}
+--- !u!114 &185578626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185578606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eaaa9af5ba95e243a3bfed91c3debc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 376595918}
+  speed: 2
+  aggroDistance: 10
 --- !u!1 &193556208 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1553163231892768, guid: 0fd5be61d8c00de419d45d6bf745a69c, type: 3}
@@ -4291,7 +4291,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 977136844864435615, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 78.63
+      value: 51.43
       objectReference: {fileID: 0}
     - target: {fileID: 977136844864435615, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4299,7 +4299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 977136844864435615, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 75.58
+      value: 31.74
       objectReference: {fileID: 0}
     - target: {fileID: 977136844864435615, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4382,10 +4382,10 @@ PrefabInstance:
       addedObject: {fileID: 185578613}
     - targetCorrespondingSourceObject: {fileID: 4311111495703447436, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 185578621}
+      addedObject: {fileID: 185578622}
     - targetCorrespondingSourceObject: {fileID: 4311111495703447436, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 185578622}
+      addedObject: {fileID: 185578626}
   m_SourcePrefab: {fileID: 100100000, guid: 790cbaa43a4b19c4a964617119f8d796, type: 3}
 --- !u!1 &672973172 stripped
 GameObject:
@@ -5184,7 +5184,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -234.1, y: -102.5}
+  m_AnchoredPosition: {x: -234.1, y: -75}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &916383201
@@ -5234,8 +5234,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 17
+  m_fontSizeBase: 17
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5252,7 +5252,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -5270,7 +5270,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -351.07965, w: -16.731483}
+  m_margin: {x: 0, y: -15.195374, z: -451.86655, w: -16.731483}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -8973,7 +8973,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1509532539
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9006,9 +9006,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f35e976160c2844580e85a1d0f9a79d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tutorialPanel: {fileID: 214122371}
-  textInstances: []
-  closeButton: {fileID: 0}
+  tutorialPanel: {fileID: 1846848137}
+  indicatorImage: {fileID: 214122371}
+  closeButton: {fileID: 312225681}
 --- !u!1001 &1514616947
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9592,9 +9592,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcName: Villager
   contentList:
-  - sdasdsada
-  - g3g ergergreg
-  - eqw eqwe wqe wq
+  - Oh no, my teddy bear has been snatched by those bad guys across the lake! They
+    are hiding in that broken down castle! Could you please help me get it back?
+  - Those guys are a real nuisance! They've been causing trouble around our village
+    lately. If you could bring back my teddy, I'd be grateful!
+  - The guys  are hiding out in the castle just beyond the lake. Be careful, they
+    might get angry if you approach them But if you can defeat them, I'll reward
+    you handsomely.
 --- !u!1001 &1600624450
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,10 +8,9 @@ public class DisplayTexture : MonoBehaviour
 
     void Start()
     {
-        // Load the Preview Scene additively
+    // Set the image of the ui to the render texture from the Preview Scene to be played
+    // alongside the  starting screen for a aesthetic look
         UnityEngine.SceneManagement.SceneManager.LoadScene(previewSceneName, UnityEngine.SceneManagement.LoadSceneMode.Additive);
-
-        // Find the RenderTexture and assign it to RawImage
         RenderTexture renderTexture = Resources.Load<RenderTexture>("EnvironmentRenderTexture");
         if (rawImage != null && renderTexture != null)
         {
@@ -19,7 +18,7 @@ public class DisplayTexture : MonoBehaviour
         }
         else
         {
-            Debug.LogError("RawImage or RenderTexture not assigned.");
+            Debug.LogError("The preview of the scene is not available");
         }
     }
 }
