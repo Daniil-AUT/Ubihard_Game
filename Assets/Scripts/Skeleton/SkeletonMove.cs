@@ -2,33 +2,27 @@ using UnityEngine;
 
 public class SkeletonFollow : MonoBehaviour
 {
-    public Transform player;              // Reference to the player’s transform
-    public float speed = 5f;              // Speed of the NPC
-    public float aggroDistance = 10f;     // Distance within which the NPC starts moving
+    public Transform player; 
+    public float speed = 5f;           
+    public float aggroDistance = 10f;     
 
-    private Animator animator;            // Reference to the Animator component
+    // call the animator class to triigger animation
+    private Animator animator;  
 
     void Start()
     {
-        // Get the Animator component attached to this GameObject
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // Calculate the distance between the NPC and the player
+        // difference between skelton and player position
         float distance = Vector3.Distance(transform.position, player.position);
-
-        // Check if the NPC is within the aggro distance
         bool isAggro = distance <= aggroDistance;
-
-        // Update animation based on NPC state
         UpdateAnimation(isAggro);
-
-        // Always face the player
         FacePlayer();
 
-        // Move the NPC towards the player if within aggro distance
+        // Check if the player is inside the aggro range of the npc 
         if (isAggro)
         {
             MoveTowardsPlayer();
@@ -37,32 +31,33 @@ public class SkeletonFollow : MonoBehaviour
 
     void MoveTowardsPlayer()
     {
-        // Calculate the distance between the NPC and the player
+        // get the distance between the player and the skeleon
         float distance = Vector3.Distance(transform.position, player.position);
-
-        // Move the NPC towards the player if beyond the stopping distance
-        if (distance > 1.5f)  // Adjust the stopping distance as needed
+        
+        // check if skeleton is away from the player and if he's far enough then the skelton should move towards the player
+        if (distance > 1.5f)  
         {
             Vector3 direction = (player.position - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
         }
     }
 
+    // The code is used for the skeleton to always face the player when looking towards hijm
     void FacePlayer()
     {
-        // Calculate direction to the player
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        directionToPlayer.y = 0;  // Keep the NPC upright (don't tilt forward/backward)
+        directionToPlayer.y = 0; 
 
-        // Rotate the NPC to face the player smoothly
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // 5f is the rotation speed
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
+    // if the skeleton is in the aggro range, it will set the parameter to true, otherwise it will be false
     void UpdateAnimation(bool isWalking)
     {
         if (animator != null)
         {
+            // the animation will play according to whether it's true or not
             animator.SetBool("IsWalking", isWalking);
         }
     }

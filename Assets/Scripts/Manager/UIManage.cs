@@ -1,20 +1,18 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // For scene management
-using UnityEngine.UI; // For button components
+using UnityEngine.SceneManagement; 
+using UnityEngine.UI; 
 
 public class UIManager : MonoBehaviour
 {
     public Button startButton;
     public Button quitButton;
-    public Button optionsButton; // Optional if you have a third button
+    public Button optionsButton; 
 
     void Start()
     {
-        // Add listeners for button clicks
+    // Handle the different buttons in the main scene ui
         startButton.onClick.AddListener(StartGame);
         quitButton.onClick.AddListener(QuitGame);
-
-        // Optionally add listener for the third button
         if (optionsButton != null)
         {
             optionsButton.onClick.AddListener(OptionsClicked);
@@ -35,7 +33,7 @@ public class UIManager : MonoBehaviour
 
     void OptionsClicked()
     {
-        // Handle options button click (if applicable)
+        // Open the options button
         Debug.Log("Options button clicked");
     }
 }
