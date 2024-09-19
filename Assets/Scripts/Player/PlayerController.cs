@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -1;
-            anim.SetBool("IsJumping", false); // End jumping
+            anim.SetBool("IsJumping", false); 
         }
 
         if(!isDodging) {
@@ -90,9 +90,9 @@ public class PlayerController : MonoBehaviour
         // Handle jump
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging)
         {
-            StartCoroutine(HandleJump());  // Start smooth jump
-            anim.SetTrigger("Jump");  // Trigger jump animation
-            anim.SetBool("IsJumping", true); // Set jumping bool
+            StartCoroutine(HandleJump());  
+            anim.SetTrigger("Jump");  
+            anim.SetBool("IsJumping", true);
         }
 
         if (velocity.y > -20 && !isJumping)
@@ -109,19 +109,15 @@ public class PlayerController : MonoBehaviour
         isJumping = true;
         jumpTime = 0f;
 
-        // Smoothly adjust jump height
         while (jumpTime < jumpDuration)
         {
             float normalizedTime = jumpTime / jumpDuration;
             velocity.y = jumpCurve.Evaluate(normalizedTime) * jumpHeight;
             jumpTime += Time.deltaTime;
-            yield return null; // Wait for the next frame
+            yield return null;
         }
 
-        // Ensure velocity is zeroed out when the jump finishes
         velocity.y = 0;
-
-        // Allow the player to jump again after landing
         yield return new WaitForSeconds(0.3f);
         canJump = true;
         isJumping = false;

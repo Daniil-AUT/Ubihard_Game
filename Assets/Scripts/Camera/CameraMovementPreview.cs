@@ -2,50 +2,34 @@ using UnityEngine;
 
 public class CameraHorizontalRotation : MonoBehaviour
 {
-    public float rotationSpeed = 30f; // Speed of the rotation (degrees per second)
-    public float delay = 2f; // Delay before rotating back
+    public float rotationSpeed = 1;
 
-    private Quaternion startRotation; // Starting rotation
-    private Quaternion endRotation; // Ending rotation (180 degrees from start)
-    private bool rotatingToEnd = true; // Whether the camera is rotating towards the end position
-    private float rotationProgress = 0f; // Progress of the rotation
+    private Quaternion startRotation;
+    private Quaternion endRotation;
+    private bool rotatingToEnd = true;
+    private float rotationProgress = 0f;
 
     void Start()
     {
-        // Store the initial rotation
+        // canera will rotate horizontally 30 degrees to the right and then to left (loops)
         startRotation = transform.rotation;
-
-        // Calculate the end rotation (180 degrees horizontal from start)
-        endRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, 45, 0));
+        endRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, 30, 0));
     }
 
+    // Needed some assistance with the physics of the camera so I used this link
+    // https://vionixstudio.com/2022/06/16/unity-quaternion-and-rotation-guide/
     void Update()
     {
-        // Determine the target rotation
-        Quaternion targetRotation = rotatingToEnd ? endRotation : startRotation;
+        Quaternion fromRotation = rotatingToEnd ? startRotation : endRotation;
+        Quaternion toRotation = rotatingToEnd ? endRotation : startRotation;
 
-        // Smoothly rotate towards the target rotation
-        rotationProgress += rotationSpeed * Time.deltaTime;
-        float rotationFraction = Mathf.Clamp01(rotationProgress / 180f); // Ensure fraction is between 0 and 1
-        transform.rotation = Quaternion.Slerp(startRotation, targetRotation, rotationFraction);
+        rotationProgress += rotationSpeed * Time.deltaTime / 200f;
+        transform.rotation = Quaternion.Slerp(fromRotation, toRotation, rotationProgress);
 
-        // Check if the rotation is complete
-        if (rotationFraction >= 1f)
+        if (rotationProgress >= 1f)
         {
-            // Switch rotation direction and reset progress
             rotatingToEnd = !rotatingToEnd;
             rotationProgress = 0f;
-
-            // Add a delay before rotating back
-            if (rotatingToEnd)
-            {
-                Invoke(nameof(ResetRotationDelay), delay);
-            }
         }
-    }
-
-    void ResetRotationDelay()
-    {
-        // Delay handled by Invoke
     }
 }

@@ -16,6 +16,7 @@ public class NPCInteractableObject : MonoBehaviour
 
     private void Update()
     {
+        // if the player is within the range of npc, then they should be able to interact
         if (playerAgent != null && !playerAgent.pathPending && !haveInteracted)
         {
             if (playerAgent.remainingDistance <= 2)
@@ -28,6 +29,6 @@ public class NPCInteractableObject : MonoBehaviour
 
     protected virtual void Interact()
     {
-        Debug.Log("Interacting with object.");
+        Debug.Log("Player inteacting with npc");
     }
 }

@@ -7,7 +7,7 @@ public class LoadScene : MonoBehaviour
 
     void Start()
     {
-        // Load the Preview Scene additively
+        // Load the Preview Scene
         SceneManager.LoadScene(previewSceneName, LoadSceneMode.Additive);
     }
-}
+}

@@ -3,45 +3,42 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    public RectTransform fillRectTransform; // The RectTransform of the health bar fill
-    public float maxHealth = 100f; // Maximum health value
+    public RectTransform fillRectTransform; 
+    public float maxHealth = 100f; 
     private float currentHealth;
 
     void Start()
     {
         currentHealth = maxHealth;
-        UpdateHealthBar(); // Initialize health bar
+        UpdateHealthBar(); 
     }
 
+    // Needed to find a way for it to always be between 0 and 100 (may have used gen ai)
     public float CurrentHealth
     {
         get => currentHealth;
         set
         {
-            currentHealth = Mathf.Clamp(value, 0, maxHealth); // Clamp health to valid range
-            UpdateHealthBar(); // Update health bar when health changes
+            currentHealth = Mathf.Clamp(value, 0, maxHealth); 
+            UpdateHealthBar(); 
         }
     }
 
+    // update the ui of the health bar if player clicked the button
     private void UpdateHealthBar()
     {
         if (fillRectTransform != null)
         {
-            // Calculate the width based on current health
             float fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
-            Debug.Log($"Updating HealthBar: Fill Amount = {fillAmount}");
-
-            // Set the width of the fillRectTransform
+            Debug.Log($"Health = {fillAmount}");
             Vector2 size = fillRectTransform.sizeDelta;
-            size.x = fillAmount * 100f; // Adjust width based on fill amount
+            size.x = fillAmount * 100f; 
             fillRectTransform.sizeDelta = size;
-
-            // Optionally, adjust other parameters if needed
-            Debug.Log($"HealthBar Width Updated: {fillRectTransform.sizeDelta}");
+            Debug.Log($"Health After: {fillRectTransform.sizeDelta}");
         }
         else
         {
-            Debug.LogError("Fill RectTransform is not assigned in HealthBar script.");
+            Debug.LogError("Health is not updating");
         }
     }
 }
