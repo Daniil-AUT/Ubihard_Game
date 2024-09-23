@@ -2,21 +2,23 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public HealthBar healthBar;  
-    public float playerHealth = 100f; 
+    public float maxHealth = 100f;
+    public float currentHealth;
+
+    public HealthBar healthBar;
     private bool isInvincible = false; 
 
     void Start()
     {
-        healthBar.maxHealth = playerHealth;
-        healthBar.CurrentHealth = playerHealth;
+        currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
     
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            TakeDamage(5f);
+            TakeDamage(10f);
         }
     }
 
@@ -25,13 +27,9 @@ public class Player : MonoBehaviour
     {
         if (!isInvincible) 
         {
-        // take 5 damage if not and update health after
-            playerHealth -= damage; 
-            if (playerHealth < 0)   
-            {
-                playerHealth = 0;
-            }
-            healthBar.CurrentHealth = playerHealth;
+            // take 5 damage if not and update health after
+            currentHealth -= damage;
+            healthBar.SetHealth(currentHealth);
         }
     }
     // set the player to be invincible based on certain condition
