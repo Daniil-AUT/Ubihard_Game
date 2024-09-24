@@ -4,9 +4,10 @@ public class Skeleton : Enemy
 {
     protected override void DropLoot()
     {
-        Debug.Log("Entering DropLoot method for Skeleton"); // Debug log to check if method is called
+        Debug.Log("can the enemy drop loot???");
 
-        int count = Random.Range(1, 4); // Number of items to drop
+        // Drop a random number of items (should be different in type)
+        int count = Random.Range(1, 4); 
         for (int i = 0; i < count; i++)
         {
             ItemSO item = ItemDBManager.Instance.GetRandomItem();
@@ -16,14 +17,14 @@ public class Skeleton : Enemy
                 go.tag = "Interactable";
                 PickableObject po = go.AddComponent<PickableObject>();
                 po.itemSO = item;
-
-                Debug.Log($"Dropped item: {item.name}"); // Debug log to check which items are dropped
+                // check if itemw was dropped
+                Debug.Log("item dropped");
             }
             else
             {
-                Debug.LogWarning("Item is null or prefab is missing."); // Warning for missing items
+                // check if the items exits
+                Debug.LogWarning("no item"); 
             }
         }
-        Debug.Log("Skeleton loot dropped"); // Confirm loot drop completion
     }
 }

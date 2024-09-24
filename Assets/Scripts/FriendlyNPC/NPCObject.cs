@@ -1,33 +1,33 @@
 using UnityEngine;
-
+// use the interactable object class to swee if the player is inside the radius
 public class NPCObject : NPCInteractableObject
 {
-    [Header("NPC Details")]
-    public string npcName;  // Assign via Inspector
-    public string[] contentList;  // Assign via Inspector
-
+    // fill in the details when in the inspector
+    public string npcName;  
+    public string[] contentList;  
     private bool playerInRange = false;
 
+    // if the player collides with an npc/their zone then show log it and show ui
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the other collider is a PlayerController
         PlayerController player = other.GetComponent<PlayerController>();
         if (player != null)
         {
-            Debug.Log("PlayerController detected");
+            Debug.Log("player enetered the radius");
             playerInRange = true;
-            DialogueUI.Instance.Show(npcName, contentList);  // Show UI with NPC data
+            DialogueUI.Instance.Show(npcName, contentList);  
         }
     }
 
+    // Use the Player Controller script see if the player is outside the radius to remove ui
     private void OnTriggerExit(Collider other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
         if (player != null)
         {
-            Debug.Log("PlayerController exited");
+            Debug.Log("player exited");
             playerInRange = false;
-            DialogueUI.Instance.Hide();  // Hide UI when leaving NPC range
+            DialogueUI.Instance.Hide();  
         }
     }
 
@@ -35,7 +35,7 @@ public class NPCObject : NPCInteractableObject
     {
         if (playerInRange)
         {
-            DialogueUI.Instance.Show(npcName, contentList);  // Interact when in range
+            DialogueUI.Instance.Show(npcName, contentList);  
         }
     }
 }
