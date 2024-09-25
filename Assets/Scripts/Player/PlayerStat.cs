@@ -22,17 +22,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    // take damage based on whether the player is invincible or not
-    void TakeDamage(float damage)
+    public void TakeDamage(float damage)
     {
         if (!isInvincible) 
         {
-            // take 5 damage if not and update health after
             currentHealth -= damage;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
         }
     }
-    // set the player to be invincible based on certain condition
+
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        healthBar.SetHealth(currentHealth);
+        Debug.Log($"Healed for {amount} health. Current health: {currentHealth}");
+    }
+
     public void SetInvincible(bool invincible)
     {
         isInvincible = invincible;
