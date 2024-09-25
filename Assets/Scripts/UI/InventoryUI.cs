@@ -11,16 +11,28 @@ public class InventoryUI : MonoBehaviour
     public TMP_Text skeletonText;
     public TMP_Text mpPotionText;
     public TMP_Text hpPotionText;
+
+    public PlayerController playerStat;
     
     [SerializeField] private ItemSO skeletonKeyItem;
     [SerializeField] private ItemSO mpPotionItem;
     [SerializeField] private ItemSO hpPotionItem;
+    public int healValue;
+    public int takeDamagelValue;
+
+    public int moveSpeedValue;
 
     private Player player;
 
     private void Start()
     {
-        player = FindObjectOfType<Player>(); 
+        player = FindObjectOfType<Player>();
+        
+        healValue = (int) hpPotionItem.propertyList[0].value; 
+        takeDamagelValue = (int) mpPotionItem.propertyList[0].value;
+        moveSpeedValue = (int) mpPotionItem.propertyList[0].value;
+
+        Debug.Log($"Heal Value {healValue}");
         HideAllItems();
     }
 
@@ -114,7 +126,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(hpPotionItem))
         {
-            player.Heal(20f); 
+            player.Heal(healValue); 
             InventoryManager.Instance.RemoveItem(hpPotionItem);
             UpdateItemVisibility(); 
             Debug.Log($"{hpPotionItem.name} has been used.");
@@ -129,7 +141,8 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(mpPotionItem))
         {
-
+            playerStat.walkSpeed = playerStat.walkSpeed * moveSpeedValue;
+            playerStat.sprintSpeed = playerStat.sprintSpeed * moveSpeedValue;
             InventoryManager.Instance.RemoveItem(mpPotionItem);
             UpdateItemVisibility(); 
             Debug.Log($"{mpPotionItem.name} has been used.");
@@ -144,7 +157,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(skeletonKeyItem))
         {
-            player.TakeDamage(15f); 
+            player.TakeDamage(takeDamagelValue); 
             InventoryManager.Instance.RemoveItem(skeletonKeyItem);
             UpdateItemVisibility(); 
             Debug.Log($"{skeletonKeyItem.name} has been used.");
