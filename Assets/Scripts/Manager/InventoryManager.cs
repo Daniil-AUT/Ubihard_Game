@@ -23,6 +23,19 @@ public class InventoryManager : MonoBehaviour
         Debug.Log($"Item {item.name} added to inventory.");
     }
 
+    public void RemoveItem(ItemSO item)
+    {
+        if (itemList.Contains(item))
+        {
+            itemList.Remove(item);
+            Debug.Log($"Item {item.name} removed from inventory.");
+        }
+        else
+        {
+            Debug.Log($"Item {item.name} not found in inventory.");
+        }
+    }
+
     public bool HasItem(ItemSO item)
     {
         return itemList.Contains(item);
