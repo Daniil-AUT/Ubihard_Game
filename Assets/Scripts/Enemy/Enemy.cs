@@ -104,9 +104,6 @@ public class Enemy : MonoBehaviour
                 // Add PickableObject component and configure it
                 PickableObject po = go.AddComponent<PickableObject>();
                 po.itemSO = item;
-
-                // Optionally, add the item to the player's inventory here if desired
-                // This step is usually handled when the player picks up the item.
             }
         }
     }
