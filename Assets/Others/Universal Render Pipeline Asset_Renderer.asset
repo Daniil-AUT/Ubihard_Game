@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    material: {fileID: 0}
+    material: {fileID: 2100000, guid: f48eb516bfd50b94b833984218ed3942, type: 2}
     renderPass: 500
-    resolution: 0
+    resolution: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
