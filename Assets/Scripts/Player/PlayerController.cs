@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
-    bool sprinting;
+    public bool sprinting;
     private float currentSpeed;
 
     public float jumpHeight;
@@ -20,9 +20,10 @@ public class PlayerController : MonoBehaviour
     public AnimationCurve jumpCurve;
     bool isGrounded;
     bool canJump = true;
-    bool isJumping = false;
+    public bool isJumping = false;
     public Vector3 velocity;
     public bool isDodging = false;
+    public bool isAttacking = false;
 
     float jumpTime;
     public float jumpDuration = 1f;
@@ -49,38 +50,45 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("IsJumping", false); 
         }
 
-        if(!isDodging) {
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (!isAttacking) 
         {
-            currentSpeed = sprintSpeed;
-            sprinting = true;
-        }
+            if (isDodging)
+            {
+                currentSpeed = walkSpeed; 
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    currentSpeed = sprintSpeed;
+                    sprinting = true;
+                }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            currentSpeed = walkSpeed;
-            sprinting = false;
-        }
-        }
-        else {
-             currentSpeed = walkSpeed; 
-        }
+                if (Input.GetKeyUp(KeyCode.LeftShift))
+                {
+                    currentSpeed = walkSpeed;
+                    sprinting = false;
+                }
+            }
 
+            movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            Vector3 direction = new Vector3(movement.x, 0, movement.y).normalized;
 
-        movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        Vector3 direction = new Vector3(movement.x, 0, movement.y).normalized;
+            if (direction.magnitude >= 0.1f)
+            {
+                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-        if (direction.magnitude >= 0.1f)
-        {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                controller.Move(moveDirection.normalized * currentSpeed * Time.deltaTime);
 
-            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            controller.Move(moveDirection.normalized * currentSpeed * Time.deltaTime);
-
-            anim.SetFloat("Speed", sprinting ? 2 : 1);
+                anim.SetFloat("Speed", sprinting ? 2 : 1);
+            }
+            else
+            {
+                anim.SetFloat("Speed", 0);
+            }
         }
         else
         {
@@ -88,7 +96,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Handle jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking)
         {
             StartCoroutine(HandleJump());  
             anim.SetTrigger("Jump");  
