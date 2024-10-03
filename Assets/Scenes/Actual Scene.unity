@@ -15,9 +15,9 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.74626946, g: 0.9066825, b: 0.9485294, a: 1}
-  m_FogMode: 1
-  m_FogDensity: 0.003
+  m_FogColor: {r: 0.77672946, g: 1, b: 0.99949, a: 1}
+  m_FogMode: 2
+  m_FogDensity: 0.001
   m_LinearFogStart: 0
   m_LinearFogEnd: 900
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -3810,7 +3810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 1067562161}
-  spawnTime: 5
+  spawnTime: 6
 --- !u!4 &553673276
 Transform:
   m_ObjectHideFlags: 0
@@ -11614,6 +11614,7 @@ GameObject:
   - component: {fileID: 1686823793}
   - component: {fileID: 1686823792}
   - component: {fileID: 1686823795}
+  - component: {fileID: 1686823796}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -11675,6 +11676,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: []
+--- !u!114 &1686823796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686823791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45820f11fbc622444b9b90cb4d3614ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minFogDensity: 0
+  maxFogDensity: 0.07
+  fogChangeSpeed: 0.003
 --- !u!1001 &1688231258
 PrefabInstance:
   m_ObjectHideFlags: 0
