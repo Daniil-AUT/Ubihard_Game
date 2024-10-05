@@ -31,7 +31,7 @@ public class PickableObject : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("InventoryManager instance not found.");
+            Debug.LogWarning("InventoryManagerin instance not found.");
         }
     }
 }
