@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     public HealthBar healthBar;
     private bool isInvincible = false; 
 
+    public int currentCurrency = 0;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -43,5 +45,39 @@ public class Player : MonoBehaviour
     public void SetInvincible(bool invincible)
     {
         isInvincible = invincible;
+    }
+
+    public void AddCurrency(int amount)
+    {
+        currentCurrency += amount;
+        Debug.Log($"Added {amount} of currency. Total currency: {currentCurrency}");
+        UpdateCurrencyUI();
+    }
+
+    public void SpendCurrency(int amount)
+    {
+        if (currentCurrency >= amount)
+        {
+            currentCurrency -= amount;
+            Debug.Log($"Spent {amount} of currency. Remaining currency: {currentCurrency}");
+            UpdateCurrencyUI();
+        }
+        else
+        {
+            Debug.Log("Not enough currency to spend.");
+        }
+    }
+    
+    private void UpdateCurrencyUI()
+    {
+        CurrencyUI currencyUI = FindObjectOfType<CurrencyUI>();
+        if (currencyUI != null)
+        {
+            currencyUI.UpdateCurrencyDisplay();
+        }
+        else
+        {
+            Debug.LogError("CurrencyUI not found");
+        }
     }
 }
