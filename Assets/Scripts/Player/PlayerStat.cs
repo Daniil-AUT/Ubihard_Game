@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
     public float currentHealth;
 
     public HealthBar healthBar;
-    private bool isInvincible = false; 
+    private bool isInvincible = false;
 
     void Start()
     {
@@ -19,6 +19,17 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             TakeDamage(10f);
+        }
+
+        // Add save and load functionality
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            SaveLoadManager.Instance.SaveGame();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            SaveLoadManager.Instance.LoadGame();
         }
     }
 
