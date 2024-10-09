@@ -1,22 +1,24 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Include this for TextMeshPro
+using TMPro;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuPanel; // Reference to the pause menu panel
-    public Button resumeButton; // Reference to the TextMeshPro resume button
-    public Button quitButton; // Reference to the TextMeshPro quit button (optional)
+    public GameObject pauseMenuPanel;
+    public Button resumeButton;
+    public Button saveButton; // New Save button
+    public Button loadButton; // New Load button
+    public Button quitButton;
     
-    private bool isPaused = false; // To track if the game is paused
+    private bool isPaused = false;
 
     void Start()
     {
-        // Ensure the pause menu is hidden at the start
         pauseMenuPanel.SetActive(false);
 
-        // Add listeners to the buttons
         resumeButton.onClick.AddListener(ResumeGame);
+        saveButton.onClick.AddListener(SaveGame); // Add listener for Save button
+        loadButton.onClick.AddListener(LoadGame); // Add listener for Load button
         if (quitButton != null) 
         {
             quitButton.onClick.AddListener(QuitGame);
@@ -25,7 +27,6 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        // Check if the Escape key is pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
@@ -41,33 +42,45 @@ public class PauseMenu : MonoBehaviour
 
     public void PauseGame()
     {
-        pauseMenuPanel.SetActive(true); // Show the pause menu
-        Time.timeScale = 0; // Pause the game time
-        isPaused = true; // Update the pause state
+        pauseMenuPanel.SetActive(true);
+        Time.timeScale = 0;
+        isPaused = true;
         
-        // Enable mouse cursor and visibility
-        Cursor.lockState = CursorLockMode.None; // Allow mouse movement
-        Cursor.visible = true; // Show the cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void ResumeGame()
     {
-        pauseMenuPanel.SetActive(false); // Hide the pause menu
-        Time.timeScale = 1; // Resume the game time
-        isPaused = false; // Update the pause state
+        pauseMenuPanel.SetActive(false);
+        Time.timeScale = 1;
+        isPaused = false;
         
-        // Disable mouse cursor
-        Cursor.lockState = CursorLockMode.Locked; // Lock mouse to center
-        Cursor.visible = false; // Hide the cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void SaveGame()
+    {
+        SaveLoadManager.Instance.SaveGame();
+        Debug.Log("Game saved!");
+        // Optionally, you can show a temporary message to the user that the game has been saved
+    }
+
+    public void LoadGame()
+    {
+        SaveLoadManager.Instance.LoadGame();
+        Debug.Log("Game loaded!");
+        // After loading, you might want to resume the game
+        ResumeGame();
     }
 
     public void QuitGame()
     {
-        // Add your logic for quitting the game (e.g., load main menu scene or exit)
         Application.Quit();
         
         #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // Stop play mode in the editor
+        UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
 }

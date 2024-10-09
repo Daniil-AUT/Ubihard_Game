@@ -107,7 +107,6 @@ public class InventoryUI : MonoBehaviour
 
     private void HandleItemUsage()
     {
-    
         if (Input.GetKeyDown(KeyCode.Alpha1)) 
         {
             UseHpPotion();
@@ -166,5 +165,11 @@ public class InventoryUI : MonoBehaviour
         {
             Debug.Log($"No {skeletonKeyItem.name} available to use.");
         }
+    }
+
+    // Add this method to update the UI when loading a game
+    public void RefreshUI()
+    {
+        UpdateItemVisibility();
     }
 }
