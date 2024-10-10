@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
@@ -23,7 +24,6 @@ public class SaveLoadManager : MonoBehaviour
             return _instance;
         }
     }
-
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
 
     public void SaveGame()
@@ -42,11 +42,19 @@ public class SaveLoadManager : MonoBehaviour
             saveData.playerPosition[1] = playerPosition.y;
             saveData.playerPosition[2] = playerPosition.z;
         }
+        else
+        {
+            Console.WriteLine("Object Player doesn't exist");
+        }
 
         // Save inventory items
         if (InventoryManager.Instance != null)
         {
             saveData.inventoryItems = InventoryManager.Instance.GetSaveData();
+        }
+        else
+        {
+            Console.WriteLine("Inventory Manager failed to loaded");
         }
 
         // Serialize and save data
@@ -56,7 +64,7 @@ public class SaveLoadManager : MonoBehaviour
             formatter.Serialize(stream, saveData);
         }
 
-        Debug.Log("Game saved successfully!");
+        Debug.Log("Game saved successfully");
     }
 
     public void LoadGame()
@@ -96,11 +104,19 @@ public class SaveLoadManager : MonoBehaviour
 
                     Debug.Log($"Player and camera teleported to position: {newPosition}");
                 }
+                else 
+                {
+                    Console.WriteLine("Object Player doesn't exist");
+                }
 
                 // Load inventory items
                 if (InventoryManager.Instance != null)
                 {
                     InventoryManager.Instance.LoadSaveData(saveData.inventoryItems);
+                }
+                else
+                {
+                    Console.WriteLine("Inventory Manager failed to loaded");
                 }
 
                 // Refresh UI
@@ -109,8 +125,10 @@ public class SaveLoadManager : MonoBehaviour
                 {
                     inventoryUI.RefreshUI();
                 }
-
-                Debug.Log("Game loaded and player teleported successfully!");
+                else
+                {
+                    Console.WriteLine("Inventory Manager failed to loaded");
+                }
             }
         }
         else
@@ -125,5 +143,5 @@ public class SaveData
 {
     public float playerHealth;
     public List<int> inventoryItems;
-    public float[] playerPosition = new float[3];  // Store player position as x, y, z
+    public Vector3 position;
 }
