@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 
     public HealthBar healthBar;
     private bool isInvincible = false;
+    public Vector3 playerPosition;
 
     void Start()
     {
@@ -16,6 +17,8 @@ public class Player : MonoBehaviour
     
     void Update()
     {
+        playerPosition = transform.position;
+
         if (Input.GetKeyDown(KeyCode.M))
         {
             TakeDamage(10f);
@@ -31,6 +34,13 @@ public class Player : MonoBehaviour
         {
             SaveLoadManager.Instance.LoadGame();
         }
+
+    }
+
+    public void TeleportPlayer(Vector3 newPosition)
+    {
+        transform.position = newPosition; // Set the player's position to the new coordinates
+        Debug.Log("THIS FUNCTION WORKED!!!" + newPosition); // Log the new position
     }
 
     public void TakeDamage(float damage)

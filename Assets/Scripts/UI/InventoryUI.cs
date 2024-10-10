@@ -140,8 +140,8 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(mpPotionItem))
         {
-            playerStat.walkSpeed = playerStat.walkSpeed * moveSpeedValue;
-            playerStat.sprintSpeed = playerStat.sprintSpeed * moveSpeedValue;
+            playerStat.walkSpeed = playerStat.walkSpeed +2 ;
+            playerStat.sprintSpeed = playerStat.sprintSpeed + 2;
             InventoryManager.Instance.RemoveItem(mpPotionItem);
             UpdateItemVisibility(); 
             Debug.Log($"{mpPotionItem.name} has been used.");

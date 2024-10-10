@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class SaveLoadManager : MonoBehaviour
 {
+    public Player playerTeleport;
     private static SaveLoadManager _instance;
     public static SaveLoadManager Instance
     {
@@ -29,11 +30,17 @@ public class SaveLoadManager : MonoBehaviour
     {
         SaveData saveData = new SaveData();
 
-        // Save player health
+        // Save player health and position
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
+
+            // Save player position
+            Vector3 playerPosition = player.transform.position;
+            saveData.playerPosition[0] = playerPosition.x;
+            saveData.playerPosition[1] = playerPosition.y;
+            saveData.playerPosition[2] = playerPosition.z;
         }
         else
         {
@@ -68,13 +75,34 @@ public class SaveLoadManager : MonoBehaviour
             using (FileStream stream = new FileStream(SavePath, FileMode.Open))
             {
                 SaveData saveData = formatter.Deserialize(stream) as SaveData;
-
-                // Load player health
-                Player player = FindObjectOfType<Player>();
+                
+                // Load player data (health and position)
+                GameObject player = GameObject.FindWithTag("Player");  // Find player using tag
                 if (player != null)
                 {
-                    player.currentHealth = saveData.playerHealth;
-                    player.healthBar.SetHealth(saveData.playerHealth);
+                    Player playerScript = player.GetComponent<Player>();  // Access the Player script
+
+                    // Load player health
+                    playerScript.currentHealth = saveData.playerHealth;
+                    playerScript.healthBar.SetHealth(saveData.playerHealth);
+
+                    // Create the new position Vector3
+                    Vector3 newPosition = new Vector3(
+                        saveData.playerPosition[0],
+                        saveData.playerPosition[1],
+                        saveData.playerPosition[2]
+                    );
+
+
+                    // If the camera is a child of the player, it will move with the player
+                    // If not, find the main camera and move it too
+                    Camera mainCamera = Camera.main;
+                    if (mainCamera != null && !mainCamera.transform.IsChildOf(player.transform))
+                    {
+                        mainCamera.transform.position = newPosition + mainCamera.transform.localPosition;
+                    }
+
+                    Debug.Log($"Player and camera teleported to position: {newPosition}");
                 }
                 else 
                 {
@@ -101,8 +129,6 @@ public class SaveLoadManager : MonoBehaviour
                 {
                     Console.WriteLine("Inventory Manager failed to loaded");
                 }
-
-                Debug.Log("Game loaded successfully");
             }
         }
         else
