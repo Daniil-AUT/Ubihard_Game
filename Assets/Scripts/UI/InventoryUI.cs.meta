@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 70b947b905c6d0b4e89ade34524907ee
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - skeletonKeyIcon: {instanceID: 0}
+  - mpPotionIcon: {instanceID: 0}
+  - hpPotionIcon: {instanceID: 0}
+  - skeletonText: {instanceID: 0}
+  - mpPotionText: {instanceID: 0}
+  - hpPotionText: {instanceID: 0}
+  - playerStat: {instanceID: 0}
+  - skeletonKeyItem: {instanceID: 0}
+  - mpPotionItem: {instanceID: 0}
+  - hpPotionItem: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
