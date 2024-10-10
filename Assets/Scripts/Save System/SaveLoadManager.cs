@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
@@ -22,7 +23,6 @@ public class SaveLoadManager : MonoBehaviour
             return _instance;
         }
     }
-
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
 
     public void SaveGame()
@@ -35,11 +35,19 @@ public class SaveLoadManager : MonoBehaviour
         {
             saveData.playerHealth = player.currentHealth;
         }
+        else
+        {
+            Console.WriteLine("Object Player doesn't exist");
+        }
 
         // Save inventory items
         if (InventoryManager.Instance != null)
         {
             saveData.inventoryItems = InventoryManager.Instance.GetSaveData();
+        }
+        else
+        {
+            Console.WriteLine("Inventory Manager failed to loaded");
         }
 
         // Serialize and save data
@@ -49,7 +57,7 @@ public class SaveLoadManager : MonoBehaviour
             formatter.Serialize(stream, saveData);
         }
 
-        Debug.Log("Game saved successfully!");
+        Debug.Log("Game saved successfully");
     }
 
     public void LoadGame()
@@ -68,11 +76,19 @@ public class SaveLoadManager : MonoBehaviour
                     player.currentHealth = saveData.playerHealth;
                     player.healthBar.SetHealth(saveData.playerHealth);
                 }
+                else 
+                {
+                    Console.WriteLine("Object Player doesn't exist");
+                }
 
                 // Load inventory items
                 if (InventoryManager.Instance != null)
                 {
                     InventoryManager.Instance.LoadSaveData(saveData.inventoryItems);
+                }
+                else
+                {
+                    Console.WriteLine("Inventory Manager failed to loaded");
                 }
 
                 // Refresh UI
@@ -81,8 +97,12 @@ public class SaveLoadManager : MonoBehaviour
                 {
                     inventoryUI.RefreshUI();
                 }
+                else
+                {
+                    Console.WriteLine("Inventory Manager failed to loaded");
+                }
 
-                Debug.Log("Game loaded successfully!");
+                Debug.Log("Game loaded successfully");
             }
         }
         else
@@ -97,4 +117,5 @@ public class SaveData
 {
     public float playerHealth;
     public List<int> inventoryItems;
+    public Vector3 position;
 }
