@@ -11,6 +11,7 @@ public class BagUI : MonoBehaviour
     public GameObject itemPrefab;
     private bool isShow = false;
 
+    public ItemDetailUI itemDetailUI;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -63,6 +64,6 @@ public class BagUI : MonoBehaviour
     }
     public void OnItemClick(ItemSO itemSO)
     { 
-        
+        itemDetailUI.UpdateItemDetailUI(itemSO);
     }
 }
