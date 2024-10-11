@@ -999,6 +999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 100
+  currencyReward: 20
   detectionRange: 5
   restTime: 2
 --- !u!54 &110770485
