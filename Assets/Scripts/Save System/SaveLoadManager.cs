@@ -35,12 +35,6 @@ public class SaveLoadManager : MonoBehaviour
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
-
-            // Save player position
-            Vector3 playerPosition = player.transform.position;
-            saveData.playerPosition[0] = playerPosition.x;
-            saveData.playerPosition[1] = playerPosition.y;
-            saveData.playerPosition[2] = playerPosition.z;
         }
         else
         {
@@ -85,24 +79,6 @@ public class SaveLoadManager : MonoBehaviour
                     // Load player health
                     playerScript.currentHealth = saveData.playerHealth;
                     playerScript.healthBar.SetHealth(saveData.playerHealth);
-
-                    // Create the new position Vector3
-                    Vector3 newPosition = new Vector3(
-                        saveData.playerPosition[0],
-                        saveData.playerPosition[1],
-                        saveData.playerPosition[2]
-                    );
-
-
-                    // If the camera is a child of the player, it will move with the player
-                    // If not, find the main camera and move it too
-                    Camera mainCamera = Camera.main;
-                    if (mainCamera != null && !mainCamera.transform.IsChildOf(player.transform))
-                    {
-                        mainCamera.transform.position = newPosition + mainCamera.transform.localPosition;
-                    }
-
-                    Debug.Log($"Player and camera teleported to position: {newPosition}");
                 }
                 else 
                 {

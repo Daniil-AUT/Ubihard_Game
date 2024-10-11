@@ -53,6 +53,7 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(ItemSO item)
     {
         itemList.Add(item);
+        BagUI.Instance.AddItem(item);
         Debug.Log($"Item {item.name} added to inventory.");
     }
 
