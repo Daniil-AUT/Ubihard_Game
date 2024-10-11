@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
 
     public float detectionRange = 5.0f;
     private GameObject player;
+    private Animator anim;
+
     public enum EnemyState
     {
         NormalState,
@@ -28,6 +30,7 @@ public class Enemy : MonoBehaviour
     {
         enemyAgent = GetComponent<NavMeshAgent>();
         player = GameObject.FindWithTag("Player");
+        anim = GetComponent<Animator>();
     }
     void Update()
     {
@@ -75,6 +78,9 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         HP -= damage;
+        Debug.Log("Enemy HP: " + HP);
+        anim.SetTrigger("EnemyHit");
+
         if (HP <= 0)
         {
             // Disable enemy's collider to prevent further interactions
@@ -113,9 +119,6 @@ public class Enemy : MonoBehaviour
                 // Add PickableObject component and configure it
                 PickableObject po = go.AddComponent<PickableObject>();
                 po.itemSO = item;
-
-                // Optionally, add the item to the player's inventory here if desired
-                // This step is usually handled when the player picks up the item.
             }
         }
     }
