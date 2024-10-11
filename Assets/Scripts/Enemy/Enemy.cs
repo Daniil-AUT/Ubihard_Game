@@ -4,6 +4,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public int HP = 100;
+   
+    public int currencyReward = 20;
 
     public float detectionRange = 5.0f;
     private GameObject player;
@@ -83,6 +85,13 @@ public class Enemy : MonoBehaviour
         {
             // Disable enemy's collider to prevent further interactions
             GetComponent<Collider>().enabled = false;
+
+            // Give currency to player when enemy dies
+            Player PlayerStat = FindObjectOfType<Player>();
+            if (PlayerStat != null)
+            {
+                PlayerStat.AddCurrency(currencyReward);
+            }
 
             // Drop items when enemy dies
             DropLoot();
