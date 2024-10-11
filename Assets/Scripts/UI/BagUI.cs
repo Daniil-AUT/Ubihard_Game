@@ -72,5 +72,7 @@ public class BagUI : MonoBehaviour
         Destroy(itemUI.gameObject);
 
         InventoryManager.Instance.RemoveItem(itemSO);
+
+        GameObject.FindWithTag("Player").GetComponent<PlayerItem>().UseItem(itemSO);
     }
 }
