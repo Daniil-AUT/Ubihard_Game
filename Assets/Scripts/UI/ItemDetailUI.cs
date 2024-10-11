@@ -12,13 +12,22 @@ public class ItemDetailUI : MonoBehaviour
     public GameObject propertyGrid;
     public GameObject propertyTemplate;
 
+    private ItemSO itemSO;
+    private ItemUI itemUI;
+
     private void Start()
     {
         propertyTemplate.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 
-    public void UpdateItemDetailUI(ItemSO itemSO)
+    public void UpdateItemDetailUI(ItemSO itemSO, ItemUI itemUI)
     {
+        this.itemSO = itemSO;
+        this.itemUI = itemUI;
+
+        this.gameObject.SetActive(true);
+
         iconImage.sprite = itemSO.icon;
         nameText.text = itemSO.name;
         descriptionText.text = itemSO.description;
@@ -44,7 +53,7 @@ public class ItemDetailUI : MonoBehaviour
                     propertyName = "Speed + ";
                     break;
                 case ItemPropertyType.HP:
-                    propertyName = "HP + ";
+                    propertyName = "HP ";
                     break;
                 case ItemPropertyType.MP:
                     propertyName = "MP + ";
@@ -57,8 +66,14 @@ public class ItemDetailUI : MonoBehaviour
             propertyStr += property.value;
             GameObject go = GameObject.Instantiate(propertyTemplate);
             go.SetActive(true);
-            go.transform.parent = propertyGrid.transform;
+            go.transform.SetParent(propertyGrid.transform);
             go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
         }
+    }
+
+    public void UseButtonClick()
+    {
+        BagUI.Instance.OnItemUse(itemSO, itemUI);
+        this.gameObject.SetActive(false);
     }
 }

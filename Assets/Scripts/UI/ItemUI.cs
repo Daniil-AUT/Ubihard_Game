@@ -18,7 +18,7 @@ public class ItemUI : MonoBehaviour
     }
     public void OnClick()
     {
-        BagUI.Instance.OnItemClick(itemSO);
+        BagUI.Instance.OnItemClick(itemSO,this);
     }
 
 }

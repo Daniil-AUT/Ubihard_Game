@@ -57,13 +57,20 @@ public class BagUI : MonoBehaviour
     public void AddItem(ItemSO itemSO)
     { 
         GameObject itemGo = GameObject.Instantiate(itemPrefab);
-        itemGo.transform.parent = content.transform;
+        itemGo.transform.SetParent(content.transform);
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
 
         itemUI.InitItem(itemSO);
     }
-    public void OnItemClick(ItemSO itemSO)
+    public void OnItemClick(ItemSO itemSO, ItemUI itemUI)
     { 
-        itemDetailUI.UpdateItemDetailUI(itemSO);
+        itemDetailUI.UpdateItemDetailUI(itemSO, itemUI);
+    }
+
+    public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
+    {
+        Destroy(itemUI.gameObject);
+
+        InventoryManager.Instance.RemoveItem(itemSO);
     }
 }
