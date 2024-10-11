@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BagUI : MonoBehaviour
 {
-    private GameObject uiGameObject;
     public static BagUI Instance { get; private set; }
+    private GameObject uiGameObject;
     private GameObject content;
     public GameObject itemPrefab;
     private bool isShow = false;
@@ -23,7 +23,7 @@ public class BagUI : MonoBehaviour
     void Start()
     {
         uiGameObject = transform.Find("UI").gameObject;
-        content = transform.Find("UI/background/Scroll View/Content").gameObject;
+        content = transform.Find("UI/background/Scroll View/Viewport/Content").gameObject;
         Hide();
     }
 
@@ -58,6 +58,11 @@ public class BagUI : MonoBehaviour
         GameObject itemGo = GameObject.Instantiate(itemPrefab);
         itemGo.transform.parent = content.transform;
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
-        itemUI.InitItem(itemSO.icon, itemSO.name);
+
+        itemUI.InitItem(itemSO);
+    }
+    public void OnItemClick(ItemSO itemSO)
+    { 
+        
     }
 }
