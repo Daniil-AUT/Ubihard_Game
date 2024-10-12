@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public float detectionRange = 5.0f;
     private GameObject player;
     private Animator anim;
+    private PlayerTargetLock playerTargetLock;
 
     public enum EnemyState
     {
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
         enemyAgent = GetComponent<NavMeshAgent>();
         player = GameObject.FindWithTag("Player");
         anim = GetComponent<Animator>();
+        playerTargetLock = FindObjectOfType<PlayerTargetLock>();
     }
     void Update()
     {
@@ -86,6 +88,13 @@ public class Enemy : MonoBehaviour
 
             // Drop items when enemy dies
             DropLoot();
+
+            if (playerTargetLock != null && playerTargetLock.currentTarget == transform)
+            {
+                playerTargetLock.isTargeting = false;
+                playerTargetLock.currentTarget = null;
+                playerTargetLock.targetIcon.gameObject.SetActive(false);
+            }
 
             // Destroy the enemy GameObject
             Destroy(gameObject);
