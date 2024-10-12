@@ -107,7 +107,6 @@ public class InventoryUI : MonoBehaviour
 
     private void HandleItemUsage()
     {
-    
         if (Input.GetKeyDown(KeyCode.Alpha1)) 
         {
             UseHpPotion();
@@ -141,8 +140,8 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(mpPotionItem))
         {
-            playerStat.walkSpeed = playerStat.walkSpeed * moveSpeedValue;
-            playerStat.sprintSpeed = playerStat.sprintSpeed * moveSpeedValue;
+            playerStat.walkSpeed = playerStat.walkSpeed +2 ;
+            playerStat.sprintSpeed = playerStat.sprintSpeed + 2;
             InventoryManager.Instance.RemoveItem(mpPotionItem);
             UpdateItemVisibility(); 
             Debug.Log($"{mpPotionItem.name} has been used.");
@@ -166,5 +165,11 @@ public class InventoryUI : MonoBehaviour
         {
             Debug.Log($"No {skeletonKeyItem.name} available to use.");
         }
+    }
+
+    // Add this method to update the UI when loading a game
+    public void RefreshUI()
+    {
+        UpdateItemVisibility();
     }
 }
