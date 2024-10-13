@@ -30,11 +30,13 @@ public class SaveLoadManager : MonoBehaviour
     {
         SaveData saveData = new SaveData();
 
-        // Save player health and position
+        // Save player health
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
+            // Save player currency
+            saveData.playerCurrency = player.currentCurrency;
         }
         else
         {
@@ -48,7 +50,7 @@ public class SaveLoadManager : MonoBehaviour
         }
         else
         {
-            Console.WriteLine("Inventory Manager failed to loaded");
+            Console.WriteLine("Inventory Manager failed to load");
         }
 
         // Serialize and save data
@@ -69,8 +71,8 @@ public class SaveLoadManager : MonoBehaviour
             using (FileStream stream = new FileStream(SavePath, FileMode.Open))
             {
                 SaveData saveData = formatter.Deserialize(stream) as SaveData;
-                
-                // Load player data (health and position)
+
+                // Load player data (health and currency)
                 GameObject player = GameObject.FindWithTag("Player");  // Find player using tag
                 if (player != null)
                 {
@@ -79,8 +81,11 @@ public class SaveLoadManager : MonoBehaviour
                     // Load player health
                     playerScript.currentHealth = saveData.playerHealth;
                     playerScript.healthBar.SetHealth(saveData.playerHealth);
+                    // Load player currency
+                    playerScript.currentCurrency = saveData.playerCurrency;
+                    playerScript.UpdateCurrencyUI(); // Update UI to reflect loaded currency
                 }
-                else 
+                else
                 {
                     Console.WriteLine("Object Player doesn't exist");
                 }
@@ -92,7 +97,7 @@ public class SaveLoadManager : MonoBehaviour
                 }
                 else
                 {
-                    Console.WriteLine("Inventory Manager failed to loaded");
+                    Console.WriteLine("Inventory Manager failed to load");
                 }
 
                 // Refresh UI
@@ -103,7 +108,7 @@ public class SaveLoadManager : MonoBehaviour
                 }
                 else
                 {
-                    Console.WriteLine("Inventory Manager failed to loaded");
+                    Console.WriteLine("Inventory Manager failed to load");
                 }
             }
         }
@@ -119,5 +124,5 @@ public class SaveData
 {
     public float playerHealth;
     public List<int> inventoryItems;
-    public Vector3 position;
+    public int playerCurrency; // Changed to save player's currency
 }

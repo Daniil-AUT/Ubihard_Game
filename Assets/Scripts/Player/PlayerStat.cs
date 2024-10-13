@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
         }
     }
     
-    private void UpdateCurrencyUI()
+    public void UpdateCurrencyUI()
     {
         CurrencyUI currencyUI = FindObjectOfType<CurrencyUI>();
         if (currencyUI != null)
