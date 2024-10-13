@@ -8,12 +8,19 @@ public class ItemUI : MonoBehaviour
 {
     public Image iconImage;
     public TextMeshProUGUI nameText;
+    public ItemSO ItemSO { get; private set; } 
 
-    public void InitItem(Sprite IconSprite, string name)
+    public void InitItem(ItemSO itemSO)
     {
-        iconImage.sprite = IconSprite;
-        nameText.text = name;
+        iconImage.sprite = itemSO.icon;
+        nameText.text = itemSO.name;
+        this.ItemSO = itemSO;
     }
 
-
+    // When clicked, update the item by consuming it
+    public void OnClick()
+    {
+        BagUI.Instance.OnItemClick(ItemSO);
+        BagUI.Instance.ConsumeSpecificItem(ItemSO); 
+    }
 }

@@ -4,10 +4,13 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public int HP = 100;
+   
+    public int currencyReward = 20;
 
     public float detectionRange = 5.0f;
     private GameObject player;
     private Animator anim;
+    private PlayerTargetLock playerTargetLock;
 
     public enum EnemyState
     {
@@ -29,6 +32,7 @@ public class Enemy : MonoBehaviour
         enemyAgent = GetComponent<NavMeshAgent>();
         player = GameObject.FindWithTag("Player");
         anim = GetComponent<Animator>();
+        playerTargetLock = FindObjectOfType<PlayerTargetLock>();
     }
     void Update()
     {
@@ -84,8 +88,22 @@ public class Enemy : MonoBehaviour
             // Disable enemy's collider to prevent further interactions
             GetComponent<Collider>().enabled = false;
 
+            // Give currency to player when enemy dies
+            Player PlayerStat = FindObjectOfType<Player>();
+            if (PlayerStat != null)
+            {
+                PlayerStat.AddCurrency(currencyReward);
+            }
+
             // Drop items when enemy dies
             DropLoot();
+
+            if (playerTargetLock != null && playerTargetLock.currentTarget == transform)
+            {
+                playerTargetLock.isTargeting = false;
+                playerTargetLock.currentTarget = null;
+                playerTargetLock.targetIcon.gameObject.SetActive(false);
+            }
 
             // Destroy the enemy GameObject
             Destroy(gameObject);

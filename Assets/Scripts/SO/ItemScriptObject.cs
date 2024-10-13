@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu()]
+[CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemSO : ScriptableObject
 {
     public int id;
@@ -18,7 +18,8 @@ public class ItemSO : ScriptableObject
 public enum ItemType
 {
     Weapon,
-    Consumable
+    Consumable,
+    Currency
 }
 
 [Serializable]
@@ -35,5 +36,6 @@ public enum ItemPropertyType
     Energy,
     Speed,
     Attack,
-    Defence
+    Defence,
+    CurrencyValue
 }
