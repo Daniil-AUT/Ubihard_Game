@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -7,6 +7,7 @@ public class SaveLoadManager : MonoBehaviour
 {
     public Player playerTeleport;
     private static SaveLoadManager _instance;
+
     public static SaveLoadManager Instance
     {
         get
@@ -23,7 +24,11 @@ public class SaveLoadManager : MonoBehaviour
             return _instance;
         }
     }
+
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
+
+    // Reference to your ItemDBSO
+    public ItemDBSO itemDatabase; // Drag your Item Database asset here in the Inspector
 
     public void SaveGame()
     {
@@ -34,12 +39,18 @@ public class SaveLoadManager : MonoBehaviour
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
-            // Save player currency
-            saveData.playerCurrency = player.currentCurrency;
+            saveData.playerCurrency = player.currentCurrency; // Save player currency
         }
         else
         {
             Debug.LogError("Object Player doesn't exist");
+        }
+
+        // Save inventory items
+        saveData.inventoryItemIDs = new List<int>();
+        foreach (ItemSO item in BagUI.Instance.inventory)
+        {
+            saveData.inventoryItemIDs.Add(item.id); // Save the item ID
         }
 
         // Serialize and save data
@@ -62,23 +73,35 @@ public class SaveLoadManager : MonoBehaviour
                 SaveData saveData = formatter.Deserialize(stream) as SaveData;
 
                 // Load player data (health and currency)
-                GameObject player = GameObject.FindWithTag("Player");  // Find player using tag
+                Player player = FindObjectOfType<Player>();
                 if (player != null)
                 {
-                    Player playerScript = player.GetComponent<Player>();  // Access the Player script
+                    player.currentHealth = saveData.playerHealth;
+                    player.healthBar.SetHealth(saveData.playerHealth); // Update health bar UI
 
-                    // Load player health
-                    playerScript.currentHealth = saveData.playerHealth;
-                    playerScript.healthBar.SetHealth(saveData.playerHealth);
-                    // Load player currency
-                    playerScript.currentCurrency = saveData.playerCurrency;
-                    playerScript.UpdateCurrencyUI(); // Update UI to reflect loaded currency
+                    player.currentCurrency = saveData.playerCurrency;
+                    player.UpdateCurrencyUI(); // Update UI to reflect loaded currency
                 }
                 else
                 {
                     Debug.LogError("Object Player doesn't exist");
                 }
+
+                // Load inventory items
+                foreach (int itemId in saveData.inventoryItemIDs)
+                {
+                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); // Find the item using itemId
+                    if (item != null)
+                    {
+                        BagUI.Instance.AddItem(item); // Use the existing AddItem method
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Item with ID {itemId} not found.");
+                    }
+                }
             }
+            Debug.Log("Game loaded successfully");
         }
         else
         {
@@ -92,4 +115,5 @@ public class SaveData
 {
     public float playerHealth;
     public int playerCurrency; // Save player's currency
+    public List<int> inventoryItemIDs;
 }

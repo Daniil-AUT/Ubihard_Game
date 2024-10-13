@@ -15,7 +15,7 @@ public class BagUI : MonoBehaviour
 
     public Button consumeFirstItemButton;
 
-    private List<ItemSO> inventory = new List<ItemSO>(); 
+    public List<ItemSO> inventory = new List<ItemSO>(); 
 
     private void Awake()
     {
@@ -37,6 +37,14 @@ public class BagUI : MonoBehaviour
             consumeFirstItemButton.onClick.AddListener(ConsumeFirstItem);
         }
     }
+    public void ClearInventory()
+    {
+        inventory.Clear();
+        foreach (Transform child in content.transform)
+        {
+            Destroy(child.gameObject); // Remove all UI elements
+        }
+    }
 
     // Open/Close the bag UI menu
     public void Update()
@@ -55,17 +63,26 @@ public class BagUI : MonoBehaviour
             }
         }
     }
+    
 
     // Will display the UI menu
     public void Show()
     {
         uiGameObject.SetActive(true);
+        EnableCursor(true);
     }
 
     // Will hide the UI menu
     public void Hide()
     {
         uiGameObject.SetActive(false);
+        EnableCursor(false);
+    }
+
+    private void EnableCursor(bool enable)
+    {
+        Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked; 
+        Cursor.visible = enable; 
     }
 
     // Check to see if item exists and add it to the grid
