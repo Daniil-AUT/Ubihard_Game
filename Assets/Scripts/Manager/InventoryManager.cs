@@ -50,23 +50,23 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddItem(ItemSO itemSO)
+    public void AddItem(ItemSO item)
     {
-        itemList.Add(itemSO);
-        BagUI.Instance.AddItem(itemSO);
-        Debug.Log($"Item {itemSO.name} added to inventory.");
+        itemList.Add(item);
+        BagUI.Instance.AddItem(item);
+        Debug.Log($"Item {item.name} added to inventory.");
     }
 
-    public void RemoveItem(ItemSO itemSO)
+    public void RemoveItem(ItemSO item)
     {
-        if (itemList.Contains(itemSO))
+        if (itemList.Contains(item))
         {
-            itemList.Remove(itemSO);
-            Debug.Log($"Item {itemSO.name} removed from inventory.");
+            itemList.Remove(item);
+            Debug.Log($"Item {item.name} removed from inventory.");
         }
         else
         {
-            Debug.Log($"Item {itemSO.name} not found in inventory.");
+            Debug.Log($"Item {item.name} not found in inventory.");
         }
     }
 

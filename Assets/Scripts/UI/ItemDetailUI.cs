@@ -23,10 +23,7 @@ public class ItemDetailUI : MonoBehaviour
 
     public void UpdateItemDetailUI(ItemSO itemSO, ItemUI itemUI)
     {
-        this.itemSO = itemSO;
-        this.itemUI = itemUI;
-
-        this.gameObject.SetActive(true);
+        currentItem = itemSO; 
 
         iconImage.sprite = itemSO.icon;
         nameText.text = itemSO.name;
@@ -53,7 +50,7 @@ public class ItemDetailUI : MonoBehaviour
                     propertyName = "Speed + ";
                     break;
                 case ItemPropertyType.HP:
-                    propertyName = "HP ";
+                    propertyName = "HP + ";
                     break;
                 case ItemPropertyType.MP:
                     propertyName = "MP + ";
@@ -66,7 +63,8 @@ public class ItemDetailUI : MonoBehaviour
             propertyStr += property.value;
             GameObject go = GameObject.Instantiate(propertyTemplate);
             go.SetActive(true);
-            go.transform.SetParent(propertyGrid.transform);
+
+            go.transform.SetParent(propertyGrid.transform, false);
             go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
         }
     }
