@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,19 +9,16 @@ public class ItemUI : MonoBehaviour
 {
     public Image iconImage;
     public TextMeshProUGUI nameText;
-    public ItemSO ItemSO { get; private set; } 
-
+    private ItemSO itemSO;
     public void InitItem(ItemSO itemSO)
     {
         iconImage.sprite = itemSO.icon;
         nameText.text = itemSO.name;
-        this.ItemSO = itemSO;
+        this.itemSO = itemSO;
     }
-
-    // When clicked, update the item by consuming it
     public void OnClick()
     {
-        BagUI.Instance.OnItemClick(ItemSO);
-        BagUI.Instance.ConsumeSpecificItem(ItemSO); 
+        BagUI.Instance.OnItemClick(itemSO,this);
     }
+
 }

@@ -5,17 +5,11 @@ using UnityEngine;
 public class Dodge : MonoBehaviour
 {
     [SerializeField] AnimationCurve dodgeCurve;
-
     PlayerController playerController;  
-    PlayerCombat playerCombat;
     Animator anim;
     CharacterController characterController;
-
-    public bool isDodging = false;
-    public bool isAttacking = false;
+    bool isDodging = false;
     float dodgeTimer;
-    float dodgeDistance = 2f;
-    Vector2 dodgeDirectionInput; 
     Vector3 dodgeDirection;
 
     void Start()
@@ -23,7 +17,6 @@ public class Dodge : MonoBehaviour
         playerController = GetComponent<PlayerController>(); 
         anim = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
-        playerCombat = GetComponent<PlayerCombat>(); ;
 
         Keyframe dodge_lastFrame = dodgeCurve[dodgeCurve.keys.Length - 1];
         dodgeTimer = dodge_lastFrame.time;
@@ -31,28 +24,15 @@ public class Dodge : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && !isDodging)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !isDodging && playerController.movement.magnitude > 0)
         {
-            if (playerController.isInCombat)
-            {
-                StartCoroutine(DirectionalDodging(dodgeDirectionInput, dodgeDistance));  
-            }
-            else if (playerController.movement.magnitude > 0)
-            {
-                StartCoroutine(Dodging());
-            }
+            StartCoroutine(Dodging());
         }
-    }
-
-    public void SetDodgeDirection(Vector2 movementInput)
-    {
-        dodgeDirectionInput = movementInput;
     }
 
     IEnumerator Dodging()
     {
         isDodging = true;
-        playerCombat.isDodging = true;  
         playerController.isDodging = true;  
 
         Player player = GetComponent<Player>();
@@ -83,65 +63,6 @@ public class Dodge : MonoBehaviour
         }
 
         isDodging = false;
-        playerCombat.isDodging = false;  
         playerController.isDodging = false;  
     }
-
-    IEnumerator DirectionalDodging(Vector2 directionInput, float distance)
-{
-    isDodging = true;
-    playerCombat.isDodging = true;  
-    playerController.isDodging = true;  
-
-    Player player = GetComponent<Player>();
-    if (player != null)
-    {
-        player.SetInvincible(true);
-    }
-
-    float timer = 0;
-
-    dodgeDirection = (transform.forward * directionInput.y + transform.right * directionInput.x).normalized;
-
-    if (directionInput.y > 0)
-    {
-        anim.SetTrigger("DashF");
-    }
-    else if (directionInput.y < 0)
-    {
-        anim.SetTrigger("DashB");
-    }
-    else if (directionInput.x > 0) 
-    {
-        anim.SetTrigger("DashR");
-    }
-    else if (directionInput.x < 0) 
-    {
-        anim.SetTrigger("DashL");
-    }
-
-    Vector3 targetPosition = transform.position + dodgeDirection * distance;
-
-    while (timer < dodgeTimer)
-    {
-        float speed = dodgeCurve.Evaluate(timer);
-        Vector3 dir = (dodgeDirection * speed) + (Vector3.up * playerController.velocity.y);
-
-        characterController.Move(dir * Time.deltaTime);
-        transform.position = Vector3.Lerp(transform.position, targetPosition, timer / dodgeTimer); 
-
-        timer += Time.deltaTime;
-        yield return null;
-    }
-
-    if (player != null)
-    {
-        player.SetInvincible(false);
-    }
-
-    isDodging = false;
-    playerCombat.isDodging = false;  
-    playerController.isDodging = false;  
-}
-
 }

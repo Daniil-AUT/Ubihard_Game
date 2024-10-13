@@ -11,37 +11,36 @@ public class ItemDetailUI : MonoBehaviour
     public TextMeshProUGUI descriptionText;
     public GameObject propertyGrid;
     public GameObject propertyTemplate;
-    public Button consumeButton; 
 
-    private ItemSO currentItem; 
+    private ItemSO itemSO;
+    private ItemUI itemUI;
 
-    // Set the template to invisible mode and add the button listener
     private void Start()
     {
         propertyTemplate.SetActive(false);
-        consumeButton.onClick.AddListener(ConsumeItem);
+        this.gameObject.SetActive(false);
     }
 
-    // Update the UI of a bag
-    public void UpdateItemDetailUI(ItemSO itemSO)
+    public void UpdateItemDetailUI(ItemSO itemSO, ItemUI itemUI)
     {
-        currentItem = itemSO; 
-        
+        this.itemSO = itemSO;
+        this.itemUI = itemUI;
+
+        this.gameObject.SetActive(true);
+
         iconImage.sprite = itemSO.icon;
         nameText.text = itemSO.name;
         descriptionText.text = itemSO.description;
 
-        // Delete the selected item from a Grid
-        foreach (Transform child in propertyGrid.transform)
+        foreach(Transform child in propertyGrid.transform)
         {
             if (child.gameObject.activeSelf)
-            {
+            { 
                 Destroy(child.gameObject);
             }
         }
 
-        // When certain ItemSO is picked, assign it the properties based on type
-        foreach (ItemProperty property in itemSO.propertyList)
+        foreach(ItemProperty property in itemSO.propertyList)
         {
             string propertyStr = "";
             string propertyName = "";
@@ -65,24 +64,16 @@ public class ItemDetailUI : MonoBehaviour
             }
             propertyStr += propertyName;
             propertyStr += property.value;
-
-            // Re-adjust the grid template after the item is removed
             GameObject go = GameObject.Instantiate(propertyTemplate);
             go.SetActive(true);
-
-            go.transform.SetParent(propertyGrid.transform, false);
-
+            go.transform.SetParent(propertyGrid.transform);
             go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
         }
     }
 
-    // Check if the item is valid (exists), and consume it using the BagUI method
-    private void ConsumeItem()
+    public void UseButtonClick()
     {
-        if (currentItem != null)
-        {
-            BagUI.Instance.ConsumeItem(currentItem);
-            gameObject.SetActive(false);
-        }
+        BagUI.Instance.OnItemUse(itemSO, itemUI);
+        this.gameObject.SetActive(false);
     }
 }
