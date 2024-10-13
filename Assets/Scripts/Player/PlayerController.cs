@@ -4,10 +4,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Transform cam;
-    CharacterController controller;
+    private CharacterController controller;
+    private Animator anim;
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
-    private Animator anim;
+    
 
     public Vector2 movement;
     public float walkSpeed;
@@ -24,7 +25,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 velocity;
     public bool isDodging = false;
     public bool isAttacking = false;
-
+    public bool isInCombat = false;
     float jumpTime;
     public float jumpDuration = 1f;
 
@@ -50,7 +51,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("IsJumping", false); 
         }
 
-        if (!isAttacking) 
+        if (!isAttacking && !isInCombat) 
         {
             if (isDodging)
             {
@@ -130,4 +131,5 @@ public class PlayerController : MonoBehaviour
         canJump = true;
         isJumping = false;
     }
+
 }
