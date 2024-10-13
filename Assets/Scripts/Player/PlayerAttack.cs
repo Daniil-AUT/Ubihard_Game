@@ -6,7 +6,6 @@ public class PlayerAttack : MonoBehaviour
     PlayerController playerController;
     Animator anim;
     DefaultSword sword;
-    Dodge dodge;
 
     private float attackCooldown = 1f; 
     private float lastAttackTime = 0f; 
@@ -18,7 +17,6 @@ public class PlayerAttack : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         playerController = GetComponent<PlayerController>();
         sword = GetComponentInChildren<DefaultSword>();
-        dodge = GetComponent<Dodge>();
     }
 
     void Update()
@@ -41,9 +39,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack1()
     {
+        playerController.isAttacking = true;
         isComboActive = true; 
-        playerController.isAttacking = true; 
-        dodge.isAttacking = true;
         canPerformSecondAttack = true; 
         anim.SetTrigger("Attack1");
         lastAttackTime = Time.time;
@@ -73,7 +70,6 @@ public class PlayerAttack : MonoBehaviour
         canPerformSecondAttack = false; 
         isComboActive = false; 
         playerController.isAttacking = false; 
-        dodge.isAttacking = false;
     }
 
     private IEnumerator ResetAttackState(float delay)
