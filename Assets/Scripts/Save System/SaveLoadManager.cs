@@ -77,10 +77,10 @@ public class SaveLoadManager : MonoBehaviour
                 if (player != null)
                 {
                     player.currentHealth = saveData.playerHealth;
-                    player.healthBar.SetHealth(saveData.playerHealth); // Update health bar UI
+                    player.healthBar.SetHealth(saveData.playerHealth); 
 
                     player.currentCurrency = saveData.playerCurrency;
-                    player.UpdateCurrencyUI(); // Update UI to reflect loaded currency
+                    player.UpdateCurrencyUI(); 
                 }
                 else
                 {
@@ -90,10 +90,10 @@ public class SaveLoadManager : MonoBehaviour
                 // Load inventory items
                 foreach (int itemId in saveData.inventoryItemIDs)
                 {
-                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); // Find the item using itemId
+                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); 
                     if (item != null)
                     {
-                        BagUI.Instance.AddItem(item); // Use the existing AddItem method
+                        BagUI.Instance.AddItem(item); 
                     }
                     else
                     {
@@ -114,6 +114,6 @@ public class SaveLoadManager : MonoBehaviour
 public class SaveData
 {
     public float playerHealth;
-    public int playerCurrency; // Save player's currency
+    public int playerCurrency; 
     public List<int> inventoryItemIDs;
 }
