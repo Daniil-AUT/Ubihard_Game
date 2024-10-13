@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
 
 public class SaveLoadManager : MonoBehaviour
 {
@@ -40,17 +39,7 @@ public class SaveLoadManager : MonoBehaviour
         }
         else
         {
-            Console.WriteLine("Object Player doesn't exist");
-        }
-
-        // Save inventory items
-        if (InventoryManager.Instance != null)
-        {
-            saveData.inventoryItems = InventoryManager.Instance.GetSaveData();
-        }
-        else
-        {
-            Console.WriteLine("Inventory Manager failed to load");
+            Debug.LogError("Object Player doesn't exist");
         }
 
         // Serialize and save data
@@ -87,28 +76,7 @@ public class SaveLoadManager : MonoBehaviour
                 }
                 else
                 {
-                    Console.WriteLine("Object Player doesn't exist");
-                }
-
-                // Load inventory items
-                if (InventoryManager.Instance != null)
-                {
-                    InventoryManager.Instance.LoadSaveData(saveData.inventoryItems);
-                }
-                else
-                {
-                    Console.WriteLine("Inventory Manager failed to load");
-                }
-
-                // Refresh UI
-                InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
-                if (inventoryUI != null)
-                {
-                    inventoryUI.RefreshUI();
-                }
-                else
-                {
-                    Console.WriteLine("Inventory Manager failed to load");
+                    Debug.LogError("Object Player doesn't exist");
                 }
             }
         }
@@ -123,6 +91,5 @@ public class SaveLoadManager : MonoBehaviour
 public class SaveData
 {
     public float playerHealth;
-    public List<int> inventoryItems;
-    public int playerCurrency; // Changed to save player's currency
+    public int playerCurrency; // Save player's currency
 }
