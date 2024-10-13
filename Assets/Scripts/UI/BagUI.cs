@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class BagUI : MonoBehaviour
 {
     public static BagUI Instance { get; private set; }
-
     private GameObject uiGameObject;
     private GameObject content;
     public GameObject itemPrefab;
@@ -14,8 +13,7 @@ public class BagUI : MonoBehaviour
     public ItemDetailUI itemDetailUI;
 
     public Button consumeFirstItemButton;
-
-    public List<ItemSO> inventory = new List<ItemSO>(); 
+    public List<ItemSO> inventory = new List<ItemSO>();
 
     private void Awake()
     {
@@ -37,16 +35,16 @@ public class BagUI : MonoBehaviour
             consumeFirstItemButton.onClick.AddListener(ConsumeFirstItem);
         }
     }
+
     public void ClearInventory()
     {
         inventory.Clear();
         foreach (Transform child in content.transform)
         {
-            Destroy(child.gameObject); // Remove all UI elements
+            Destroy(child.gameObject);
         }
     }
 
-    // Open/Close the bag UI menu
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
@@ -63,16 +61,13 @@ public class BagUI : MonoBehaviour
             }
         }
     }
-    
 
-    // Will display the UI menu
     public void Show()
     {
         uiGameObject.SetActive(true);
         EnableCursor(true);
     }
 
-    // Will hide the UI menu
     public void Hide()
     {
         uiGameObject.SetActive(false);
@@ -81,14 +76,50 @@ public class BagUI : MonoBehaviour
 
     private void EnableCursor(bool enable)
     {
-        Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked; 
-        Cursor.visible = enable; 
+        Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = enable;
+    }
+    public void ConsumeSpecificItem(ItemSO itemSO)
+    {
+        if (itemSO == null)
+        {
+            Debug.LogWarning("Cannot consume a null item.");
+            return;
+        }
+
+        if (inventory.Remove(itemSO))
+        {
+            foreach (Transform child in content.transform)
+            {
+                ItemUI itemUI = child.GetComponent<ItemUI>();
+                if (itemUI != null && itemUI.ItemSO == itemSO)
+                {
+                    Destroy(child.gameObject);
+                    break;
+                }
+            }
+            Debug.Log($"Consumed item: {itemSO.itemname}");
+
+            // Apply the item effect to the player
+            Player player = FindObjectOfType<Player>();
+            if (player != null)
+            {
+                player.ApplyItemEffect(itemSO);
+            }
+            else
+            {
+                Debug.LogError("Player not found in the scene.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Item {itemSO.itemname} not found in inventory.");
+        }
     }
 
-    // Check to see if item exists and add it to the grid
     public void AddItem(ItemSO itemSO)
     {
-        if (itemSO != null) 
+        if (itemSO != null)
         {
             inventory.Add(itemSO);
             GameObject itemGo = GameObject.Instantiate(itemPrefab);
@@ -102,10 +133,9 @@ public class BagUI : MonoBehaviour
         }
     }
 
-    // Check if the item is clicked and update it
     public void OnItemClick(ItemSO itemSO)
     {
-        if (itemSO != null) 
+        if (itemSO != null)
         {
             itemDetailUI.gameObject.SetActive(true);
             itemDetailUI.UpdateItemDetailUI(itemSO);
@@ -116,48 +146,9 @@ public class BagUI : MonoBehaviour
         }
     }
 
-    // Method updated to handle null or missing items
-    public void ConsumeSpecificItem(ItemSO itemSO)
-    {
-        if (itemSO == null)
-        {
-            Debug.LogWarning("Cannot consume a null item.");
-            return;
-        }
-
-        if (inventory.Count == 0)
-        {
-            Debug.Log("Inventory is empty. No item to consume.");
-            return;
-        }
-
-        // Check if the item exists in the inventory
-        if (inventory.Remove(itemSO))
-        {
-            // Find the corresponding UI element and destroy it
-            foreach (Transform child in content.transform)
-            {
-                ItemUI itemUI = child.GetComponent<ItemUI>();
-                if (itemUI != null && itemUI.ItemSO == itemSO)
-                {
-                    Destroy(child.gameObject); // Remove the item from UI
-                    Debug.Log($"Consumed and removed item: {itemSO.name}");
-                    break;
-                }
-            }
-
-            itemDetailUI.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning($"Item {itemSO.name} not found in inventory.");
-        }
-    }
-
-    // Check if inventory is empty and consume the item
     public void ConsumeFirstItem()
     {
-        if (inventory.Count == 0) 
+        if (inventory.Count == 0)
         {
             Debug.LogWarning("No items in inventory to consume!");
             return;
@@ -167,7 +158,6 @@ public class BagUI : MonoBehaviour
         ConsumeItem(firstItem);
     }
 
-    // Consume item by getting it from a list, removing it, and removing it from ui
     public void ConsumeItem(ItemSO itemSO)
     {
         if (itemSO == null)
@@ -176,7 +166,6 @@ public class BagUI : MonoBehaviour
             return;
         }
 
-        // Remove from inventory and UI (for other possible consume cases)
         if (inventory.Remove(itemSO))
         {
             foreach (Transform child in content.transform)
@@ -184,15 +173,26 @@ public class BagUI : MonoBehaviour
                 ItemUI itemUI = child.GetComponent<ItemUI>();
                 if (itemUI != null && itemUI.ItemSO == itemSO)
                 {
-                    Destroy(child.gameObject); 
+                    Destroy(child.gameObject);
                     break;
                 }
             }
-            Debug.Log($"Consumed item: {itemSO.name}");
+            Debug.Log($"Consumed item: {itemSO.itemname}");
+
+            // Apply the item effect to the player
+            Player player = FindObjectOfType<Player>();
+            if (player != null)
+            {
+                player.ApplyItemEffect(itemSO);
+            }
+            else
+            {
+                Debug.LogError("Player not found in the scene.");
+            }
         }
         else
         {
-            Debug.LogWarning($"Item {itemSO.name} not found in inventory.");
+            Debug.LogWarning($"Item {itemSO.itemname} not found in inventory.");
         }
     }
 }
