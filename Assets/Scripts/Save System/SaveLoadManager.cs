@@ -1,13 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
 
 public class SaveLoadManager : MonoBehaviour
 {
     public Player playerTeleport;
     private static SaveLoadManager _instance;
+
     public static SaveLoadManager Instance
     {
         get
@@ -24,31 +24,33 @@ public class SaveLoadManager : MonoBehaviour
             return _instance;
         }
     }
+
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
+
+    // Reference to your ItemDBSO
+    public ItemDBSO itemDatabase; // Drag your Item Database asset here in the Inspector
 
     public void SaveGame()
     {
         SaveData saveData = new SaveData();
 
-        // Save player health and position
+        // Save player health
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
+            saveData.playerCurrency = player.currentCurrency; // Save player currency
         }
         else
         {
-            Console.WriteLine("Object Player doesn't exist");
+            Debug.LogError("Object Player doesn't exist");
         }
 
         // Save inventory items
-        if (InventoryManager.Instance != null)
+        saveData.inventoryItemIDs = new List<int>();
+        foreach (ItemSO item in BagUI.Instance.inventory)
         {
-            saveData.inventoryItems = InventoryManager.Instance.GetSaveData();
-        }
-        else
-        {
-            Console.WriteLine("Inventory Manager failed to loaded");
+            saveData.inventoryItemIDs.Add(item.id); // Save the item ID
         }
 
         // Serialize and save data
@@ -69,43 +71,37 @@ public class SaveLoadManager : MonoBehaviour
             using (FileStream stream = new FileStream(SavePath, FileMode.Open))
             {
                 SaveData saveData = formatter.Deserialize(stream) as SaveData;
-                
-                // Load player data (health and position)
-                GameObject player = GameObject.FindWithTag("Player");  // Find player using tag
+
+                // Load player data (health and currency)
+                Player player = FindObjectOfType<Player>();
                 if (player != null)
                 {
-                    Player playerScript = player.GetComponent<Player>();  // Access the Player script
+                    player.currentHealth = saveData.playerHealth;
+                    player.healthBar.SetHealth(saveData.playerHealth); 
 
-                    // Load player health
-                    playerScript.currentHealth = saveData.playerHealth;
-                    playerScript.healthBar.SetHealth(saveData.playerHealth);
+                    player.currentCurrency = saveData.playerCurrency;
+                    player.UpdateCurrencyUI(); 
                 }
-                else 
+                else
                 {
-                    Console.WriteLine("Object Player doesn't exist");
+                    Debug.LogError("Object Player doesn't exist");
                 }
 
                 // Load inventory items
-                if (InventoryManager.Instance != null)
+                foreach (int itemId in saveData.inventoryItemIDs)
                 {
-                    InventoryManager.Instance.LoadSaveData(saveData.inventoryItems);
-                }
-                else
-                {
-                    Console.WriteLine("Inventory Manager failed to loaded");
-                }
-
-                // Refresh UI
-                InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
-                if (inventoryUI != null)
-                {
-                    inventoryUI.RefreshUI();
-                }
-                else
-                {
-                    Console.WriteLine("Inventory Manager failed to loaded");
+                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); 
+                    if (item != null)
+                    {
+                        BagUI.Instance.AddItem(item); 
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Item with ID {itemId} not found.");
+                    }
                 }
             }
+            Debug.Log("Game loaded successfully");
         }
         else
         {
@@ -118,6 +114,6 @@ public class SaveLoadManager : MonoBehaviour
 public class SaveData
 {
     public float playerHealth;
-    public List<int> inventoryItems;
-    public Vector3 position;
+    public int playerCurrency; 
+    public List<int> inventoryItemIDs;
 }
