@@ -26,7 +26,6 @@ public class ItemDetailUI : MonoBehaviour
     public void UpdateItemDetailUI(ItemSO itemSO)
     {
         currentItem = itemSO; 
-        
         iconImage.sprite = itemSO.icon;
         nameText.text = itemSO.name;
         descriptionText.text = itemSO.description;
@@ -54,7 +53,7 @@ public class ItemDetailUI : MonoBehaviour
                     propertyName = "Speed + ";
                     break;
                 case ItemPropertyType.HP:
-                    propertyName = "HP ";
+                    propertyName = "HP + ";
                     break;
                 case ItemPropertyType.MP:
                     propertyName = "MP + ";
@@ -69,9 +68,7 @@ public class ItemDetailUI : MonoBehaviour
             // Re-adjust the grid template after the item is removed
             GameObject go = GameObject.Instantiate(propertyTemplate);
             go.SetActive(true);
-
             go.transform.SetParent(propertyGrid.transform, false);
-
             go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
         }
     }
