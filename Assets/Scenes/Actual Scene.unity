@@ -3241,6 +3241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  movementSpeed: 5
   healthBar: {fileID: 960703408}
   playerPosition: {x: 0, y: 0, z: 0}
   currentCurrency: 0
@@ -12172,6 +12173,7 @@ MonoBehaviour:
   itemPrefab: {fileID: 1306785801}
   itemDetailUI: {fileID: 1430609882}
   consumeFirstItemButton: {fileID: 1063388186}
+  inventory: []
 --- !u!1001 &1423132680
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14466,6 +14468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTeleport: {fileID: 376595925}
+  itemDatabase: {fileID: 11400000, guid: 0a1d4590d4235d045b8e0b2112af3832, type: 2}
 --- !u!114 &1686823799
 MonoBehaviour:
   m_ObjectHideFlags: 0
