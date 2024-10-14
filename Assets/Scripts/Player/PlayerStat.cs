@@ -1,21 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
-
+    public float movementSpeed = 5f; // Add this for movement speed
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;
+    public int currentCurrency = 0;
 
-    void Start()
+    private void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }
-    
-    void Update()
+
+    private void Update()
     {
         playerPosition = transform.position;
 
@@ -24,7 +26,6 @@ public class Player : MonoBehaviour
             TakeDamage(10f);
         }
 
-        // Add save and load functionality
         if (Input.GetKeyDown(KeyCode.F5))
         {
             SaveLoadManager.Instance.SaveGame();
@@ -34,18 +35,17 @@ public class Player : MonoBehaviour
         {
             SaveLoadManager.Instance.LoadGame();
         }
-
     }
 
     public void TeleportPlayer(Vector3 newPosition)
     {
-        transform.position = newPosition; // Set the player's position to the new coordinates
-        Debug.Log("THIS FUNCTION WORKED!!!" + newPosition); // Log the new position
+        transform.position = newPosition;
+        Debug.Log("THIS FUNCTION WORKED!!!" + newPosition);
     }
 
     public void TakeDamage(float damage)
     {
-        if (!isInvincible) 
+        if (!isInvincible)
         {
             currentHealth -= damage;
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -64,5 +64,72 @@ public class Player : MonoBehaviour
     public void SetInvincible(bool invincible)
     {
         isInvincible = invincible;
+    }
+
+    public void AddCurrency(int amount)
+    {
+        currentCurrency += amount;
+        Debug.Log($"Added {amount} of currency. Total currency: {currentCurrency}");
+        UpdateCurrencyUI();
+    }
+
+    public void SpendCurrency(int amount)
+    {
+        if (currentCurrency >= amount)
+        {
+            currentCurrency -= amount;
+            Debug.Log($"Spent {amount} of currency. Remaining currency: {currentCurrency}");
+            UpdateCurrencyUI();
+        }
+        else
+        {
+            Debug.Log("Not enough currency to spend.");
+        }
+    }
+
+    public void UpdateCurrencyUI()
+    {
+        CurrencyUI currencyUI = FindObjectOfType<CurrencyUI>();
+        if (currencyUI != null)
+        {
+            currencyUI.UpdateCurrencyDisplay();
+        }
+        else
+        {
+            Debug.LogError("CurrencyUI not found");
+        }
+    }
+
+    // Method to apply effects based on the item
+    public void ApplyItemEffect(ItemSO item)
+    {
+        switch (item.id)
+        {
+            case 1: // Heal effect
+                Heal(20f); // Example healing amount
+                break;
+
+            case 2: // Speed increase
+                StartCoroutine(IncreaseSpeed(5f, 10f)); // Increase by 5 for 10 seconds
+                break;
+
+            case 3: // Damage reduction effect
+                TakeDamage(20f);
+                Debug.Log("Damage has been reduced."); // Replace this with your damage reduction logic
+                break;
+
+            default:
+                Debug.Log("No effect defined for this item.");
+                break;
+        }
+    }
+
+    private IEnumerator IncreaseSpeed(float amount, float duration)
+    {
+        movementSpeed += amount;
+        Debug.Log($"Movement speed increased to: {movementSpeed}");
+        yield return new WaitForSeconds(duration);
+        movementSpeed -= amount;
+        Debug.Log($"Movement speed reverted to: {movementSpeed}");
     }
 }

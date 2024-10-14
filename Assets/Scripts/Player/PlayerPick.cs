@@ -13,7 +13,17 @@ public class PlayerPick : MonoBehaviour
 
             if (po != null)
             {
+                //currency
+                if (po.itemSO.itemType == ItemType.Currency)
+                {
+                    int currencyValue = po.itemSO.propertyList.Find(prop => prop.propertytype == ItemPropertyType.CurrencyValue)?.value ?? 0;
+                    GetComponent<Player>().AddCurrency(currencyValue);
+                }
+                else
+                {
                 InventoryManager.Instance.AddItem(po.itemSO);
+                }
+
                 Destroy(po.gameObject);
             }
         }

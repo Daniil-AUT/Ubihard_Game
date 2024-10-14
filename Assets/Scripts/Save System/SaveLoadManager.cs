@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
 
 public class SaveLoadManager : MonoBehaviour
 {
     public Player playerTeleport;
     private static SaveLoadManager _instance;
+
     public static SaveLoadManager Instance
     {
         get
@@ -26,27 +27,30 @@ public class SaveLoadManager : MonoBehaviour
 
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
 
+    // Reference to your ItemDBSO
+    public ItemDBSO itemDatabase; // Drag your Item Database asset here in the Inspector
+
     public void SaveGame()
     {
         SaveData saveData = new SaveData();
 
-        // Save player health and position
+        // Save player health
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
-
-            // Save player position
-            Vector3 playerPosition = player.transform.position;
-            saveData.playerPosition[0] = playerPosition.x;
-            saveData.playerPosition[1] = playerPosition.y;
-            saveData.playerPosition[2] = playerPosition.z;
+            saveData.playerCurrency = player.currentCurrency; // Save player currency
+        }
+        else
+        {
+            Debug.LogError("Object Player doesn't exist");
         }
 
         // Save inventory items
-        if (InventoryManager.Instance != null)
+        saveData.inventoryItemIDs = new List<int>();
+        foreach (ItemSO item in BagUI.Instance.inventory)
         {
-            saveData.inventoryItems = InventoryManager.Instance.GetSaveData();
+            saveData.inventoryItemIDs.Add(item.id); // Save the item ID
         }
 
         // Serialize and save data
@@ -56,7 +60,7 @@ public class SaveLoadManager : MonoBehaviour
             formatter.Serialize(stream, saveData);
         }
 
-        Debug.Log("Game saved successfully!");
+        Debug.Log("Game saved successfully");
     }
 
     public void LoadGame()
@@ -67,51 +71,37 @@ public class SaveLoadManager : MonoBehaviour
             using (FileStream stream = new FileStream(SavePath, FileMode.Open))
             {
                 SaveData saveData = formatter.Deserialize(stream) as SaveData;
-                
-                // Load player data (health and position)
-                GameObject player = GameObject.FindWithTag("Player");  // Find player using tag
+
+                // Load player data (health and currency)
+                Player player = FindObjectOfType<Player>();
                 if (player != null)
                 {
-                    Player playerScript = player.GetComponent<Player>();  // Access the Player script
+                    player.currentHealth = saveData.playerHealth;
+                    player.healthBar.SetHealth(saveData.playerHealth); 
 
-                    // Load player health
-                    playerScript.currentHealth = saveData.playerHealth;
-                    playerScript.healthBar.SetHealth(saveData.playerHealth);
-
-                    // Create the new position Vector3
-                    Vector3 newPosition = new Vector3(
-                        saveData.playerPosition[0],
-                        saveData.playerPosition[1],
-                        saveData.playerPosition[2]
-                    );
-
-
-                    // If the camera is a child of the player, it will move with the player
-                    // If not, find the main camera and move it too
-                    Camera mainCamera = Camera.main;
-                    if (mainCamera != null && !mainCamera.transform.IsChildOf(player.transform))
-                    {
-                        mainCamera.transform.position = newPosition + mainCamera.transform.localPosition;
-                    }
-
-                    Debug.Log($"Player and camera teleported to position: {newPosition}");
+                    player.currentCurrency = saveData.playerCurrency;
+                    player.UpdateCurrencyUI(); 
+                }
+                else
+                {
+                    Debug.LogError("Object Player doesn't exist");
                 }
 
                 // Load inventory items
-                if (InventoryManager.Instance != null)
+                foreach (int itemId in saveData.inventoryItemIDs)
                 {
-                    InventoryManager.Instance.LoadSaveData(saveData.inventoryItems);
+                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); 
+                    if (item != null)
+                    {
+                        BagUI.Instance.AddItem(item); 
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Item with ID {itemId} not found.");
+                    }
                 }
-
-                // Refresh UI
-                InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
-                if (inventoryUI != null)
-                {
-                    inventoryUI.RefreshUI();
-                }
-
-                Debug.Log("Game loaded and player teleported successfully!");
             }
+            Debug.Log("Game loaded successfully");
         }
         else
         {
@@ -124,6 +114,6 @@ public class SaveLoadManager : MonoBehaviour
 public class SaveData
 {
     public float playerHealth;
-    public List<int> inventoryItems;
-    public float[] playerPosition = new float[3];  // Store player position as x, y, z
+    public int playerCurrency; 
+    public List<int> inventoryItemIDs;
 }
