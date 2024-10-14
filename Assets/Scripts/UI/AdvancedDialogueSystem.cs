@@ -1,41 +1,61 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro; 
 
 [System.Serializable]
 public class DialogueOption
 {
-    public string optionText;
-    public List<string> responses;
+    public string buttonText;
+    public string responseText;
+    public int nextSequenceIndex;
 }
 
 [System.Serializable]
 public class DialogueSequence
 {
     public string initialPrompt;
-    public List<DialogueOption> options;
+    public DialogueOption[] options;
 }
 
 public class AdvancedDialogueSystem : MonoBehaviour
 {
-    [SerializeField] private Text dialogueText;
-    [SerializeField] private Button[] optionButtons;
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI dialogueText; 
     [SerializeField] private GameObject dialoguePanel;
+    [SerializeField] private Button[] optionButtons;
+    [SerializeField] private TextMeshProUGUI[] buttonTexts; 
+    [SerializeField] private Button closeButton; 
 
-    private List<DialogueSequence> dialogueSequences = new List<DialogueSequence>();
+    [Header("Dialogue Data")]
+    [SerializeField] private List<DialogueSequence> dialogueSequences;
+
+    [Header("Player Detection")]
+    public string playerTag = "Player";
+
+    [Header("Timing")]
+    [SerializeField] private float responseDisplayTime = 2f;
+
     private int currentSequenceIndex = 0;
-    private int currentResponseIndex = 0;
 
     private void Start()
     {
         HideDialoguePanel();
+        SetupButtonListeners();
+        closeButton.onClick.AddListener(EndDialogue); 
     }
 
-    public void StartDialogue(List<DialogueSequence> sequences)
+    private void SetupButtonListeners()
     {
-        dialogueSequences = sequences;
+        for (int i = 0; i < optionButtons.Length; i++)
+        {
+            int index = i; 
+            optionButtons[i].onClick.AddListener(() => SelectOption(index));
+        }
+    }
+
+    public void StartDialogue()
+    {
         currentSequenceIndex = 0;
         ShowDialoguePanel();
         DisplayCurrentSequence();
@@ -54,60 +74,42 @@ public class AdvancedDialogueSystem : MonoBehaviour
 
         for (int i = 0; i < optionButtons.Length; i++)
         {
-            if (i < currentSequence.options.Count)
+            if (i < currentSequence.options.Length)
             {
                 optionButtons[i].gameObject.SetActive(true);
-                optionButtons[i].GetComponentInChildren<Text>().text = currentSequence.options[i].optionText;
-                int optionIndex = i;
-                optionButtons[i].onClick.RemoveAllListeners();
-                optionButtons[i].onClick.AddListener(() => SelectOption(optionIndex));
+                buttonTexts[i].text = currentSequence.options[i].buttonText;
             }
             else
             {
                 optionButtons[i].gameObject.SetActive(false);
             }
         }
+
+        closeButton.gameObject.SetActive(true);
     }
 
     private void SelectOption(int optionIndex)
     {
-        DialogueOption selectedOption = dialogueSequences[currentSequenceIndex].options[optionIndex];
-        currentResponseIndex = 0;
-        DisplayNextResponse(selectedOption);
-    }
+        DialogueSequence currentSequence = dialogueSequences[currentSequenceIndex];
+        DialogueOption selectedOption = currentSequence.options[optionIndex];
 
-    private void DisplayNextResponse(DialogueOption option)
-    {
-        if (currentResponseIndex >= option.responses.Count)
+        dialogueText.text = selectedOption.responseText; 
+        SetButtonsActive(false);
+
+        if (selectedOption.nextSequenceIndex >= 0)
         {
-            currentSequenceIndex++;
-            DisplayCurrentSequence();
-            return;
+            currentSequenceIndex = selectedOption.nextSequenceIndex;
+            Invoke(nameof(DisplayCurrentSequence), responseDisplayTime);
         }
-
-        dialogueText.text = option.responses[currentResponseIndex];
-        currentResponseIndex++;
-
-        for (int i = 0; i < optionButtons.Length; i++)
+        else
         {
-            if (i == 0)
-            {
-                optionButtons[i].gameObject.SetActive(true);
-                optionButtons[i].GetComponentInChildren<Text>().text = "Continue";
-                optionButtons[i].onClick.RemoveAllListeners();
-                optionButtons[i].onClick.AddListener(() => DisplayNextResponse(option));
-            }
-            else
-            {
-                optionButtons[i].gameObject.SetActive(false);
-            }
+            Invoke(nameof(EndDialogue), responseDisplayTime);
         }
     }
 
     private void EndDialogue()
     {
         HideDialoguePanel();
-        // You can add any additional logic here for when the dialogue ends
     }
 
     private void ShowDialoguePanel()
@@ -118,19 +120,31 @@ public class AdvancedDialogueSystem : MonoBehaviour
     private void HideDialoguePanel()
     {
         dialoguePanel.SetActive(false);
+        SetButtonsActive(false);
     }
 
-    // Example method to create a dialogue sequence
-    public static DialogueSequence CreateDialogueSequence(string initialPrompt, params (string optionText, string[] responses)[] options)
+    private void SetButtonsActive(bool active)
     {
-        return new DialogueSequence
+        foreach (Button button in optionButtons)
         {
-            initialPrompt = initialPrompt,
-            options = options.Select(o => new DialogueOption
-            {
-                optionText = o.optionText,
-                responses = new List<string>(o.responses)
-            }).ToList()
-        };
+            button.gameObject.SetActive(active);
+        }
+        closeButton.gameObject.SetActive(active);  
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            StartDialogue();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            EndDialogue();
+        }
     }
 }
