@@ -5,16 +5,38 @@ public class Player : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
-    public float movementSpeed = 5f; // Add this for movement speed
+    public float movementSpeed = 5f;
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;
     public int currentCurrency = 0;
+    public Animator animator; // Ensure this is linked to your Animator component
+    public GameOverManager gameOverManager;
+    public PlayerController playerController;
 
     private void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+
+        if (playerController == null)
+        {
+            playerController = GetComponent<PlayerController>();
+        }
+
+        if (playerController == null)
+        {
+            Debug.LogError("PlayerController component not found on this GameObject.");
+        }
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                Debug.LogError("Animator component not found on this GameObject.");
+            }
+        }
     }
 
     private void Update()
@@ -37,10 +59,28 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void TeleportPlayer(Vector3 newPosition)
+    public void Die()
     {
-        transform.position = newPosition;
-        Debug.Log("THIS FUNCTION WORKED!!!" + newPosition);
+        // Trigger the death animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+        else
+        {
+            Debug.LogError("Animator is not set. Cannot play death animation.");
+        }
+
+        isInvincible = true;
+
+        // Disable player controller
+        if (playerController != null)
+        {
+            playerController.enabled = false;
+        }
+
+        // Start the coroutine to handle the game over logic
+        StartCoroutine(HandleDeath());
     }
 
     public void TakeDamage(float damage)
@@ -51,9 +91,13 @@ public class Player : MonoBehaviour
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
             Debug.Log($"Player took damage: {damage}. Current health: {currentHealth}");
+
+            if (currentHealth <= 0)
+            {
+                Die();
+            }
         }
     }
-
 
     public void Heal(float amount)
     {
@@ -123,6 +167,21 @@ public class Player : MonoBehaviour
             default:
                 Debug.Log("No effect defined for this item.");
                 break;
+        }
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        float animationDuration = 2f; // Adjust this based on your death animation length
+        yield return new WaitForSeconds(animationDuration);
+
+        if (gameOverManager != null)
+        {
+            gameOverManager.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameOverManager is not set. Cannot trigger game over.");
         }
     }
 

@@ -8,14 +8,14 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
-    
 
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
     public bool sprinting;
     private float currentSpeed;
-
+    private Player playerScript;
+    private bool isDead = false;
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
@@ -29,14 +29,28 @@ public class PlayerController : MonoBehaviour
     float jumpTime;
     public float jumpDuration = 1f;
 
+    // Health variables
+    public float maxHealth = 100f; // Set maximum health
+    private float currentHealth;
+
+    // Reference to GameOverManager
+    public GameOverManager gameOverManager;
+
     // Start is called before the first frame update
     void Start()
     {
+        currentHealth = maxHealth; // Initialize current health
         currentSpeed = walkSpeed;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        playerScript = GetComponent<Player>();
+        if (playerScript == null)
+        {
+            Debug.LogError("Player script not found on this GameObject.");
+        }
     }
 
     // Update is called once per frame
@@ -44,18 +58,19 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(transform.position, 0.1f, 1);
         anim.SetBool("IsGrounded", isGrounded);
+        if (isDead) return;
 
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -1;
-            anim.SetBool("IsJumping", false); 
+            anim.SetBool("IsJumping", false);
         }
 
-        if (!isAttacking && !isInCombat) 
+        if (!isAttacking && !isInCombat)
         {
             if (isDodging)
             {
-                currentSpeed = walkSpeed; 
+                currentSpeed = walkSpeed;
             }
             else
             {
@@ -99,8 +114,8 @@ public class PlayerController : MonoBehaviour
         // Handle jump
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking)
         {
-            StartCoroutine(HandleJump());  
-            anim.SetTrigger("Jump");  
+            StartCoroutine(HandleJump());
+            anim.SetTrigger("Jump");
             anim.SetBool("IsJumping", true);
         }
 
@@ -110,26 +125,89 @@ public class PlayerController : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
+
+        // Check if health is zero to trigger death
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    IEnumerator HandleJump()
+    // Method to handle taking damage
+    public void TakeDamage(float damage)
     {
-        canJump = false;
-        isJumping = true;
-        jumpTime = 0f;
+        if (isDead) return; // Prevent taking damage when dead
 
-        while (jumpTime < jumpDuration)
+        currentHealth -= damage;
+        Debug.Log($"Current Health: {currentHealth}");
+
+        // Check if player is dead
+        if (currentHealth <= 0)
         {
-            float normalizedTime = jumpTime / jumpDuration;
-            velocity.y = jumpCurve.Evaluate(normalizedTime) * jumpHeight;
-            jumpTime += Time.deltaTime;
+            anim.SetTrigger("Die"); // Play death animation
+            Die();
+        }
+    }
+
+    // Method to handle player death
+    public void Die()
+    {
+        isDead = true;
+        playerScript.Die(); // Call player's Die method to handle death animation and logic
+        gameOverManager.TriggerGameOver(); // Call game over manager
+    }
+
+    private IEnumerator HandleJump()
+    {
+        isJumping = true;
+        float jumpStartTime = Time.time;
+
+        while (Time.time < jumpStartTime + jumpDuration)
+        {
+            float t = (Time.time - jumpStartTime) / jumpDuration;
+            velocity.y = jumpCurve.Evaluate(t) * jumpHeight; // Adjust height using the jump curve
             yield return null;
         }
 
-        velocity.y = 0;
-        yield return new WaitForSeconds(0.3f);
-        canJump = true;
         isJumping = false;
     }
 
+    // Method to handle dodging
+    public void Dodge()
+    {
+        if (!isDodging && !isAttacking)
+        {
+            isDodging = true;
+            currentSpeed = sprintSpeed; // Speed up while dodging
+            anim.SetTrigger("Dodge");
+
+            StartCoroutine(StopDodging());
+        }
+    }
+
+    private IEnumerator StopDodging()
+    {
+        yield return new WaitForSeconds(0.5f); // Adjust this based on your dodge duration
+        isDodging = false;
+        currentSpeed = walkSpeed; // Reset speed after dodging
+    }
+
+    // Method to handle attacking
+    public void Attack()
+    {
+        if (!isAttacking && !isDodging)
+        {
+            isAttacking = true;
+            anim.SetTrigger("Attack");
+            // Handle attack logic here
+
+            StartCoroutine(StopAttacking());
+        }
+    }
+
+    private IEnumerator StopAttacking()
+    {
+        yield return new WaitForSeconds(1f); // Adjust this based on your attack animation length
+        isAttacking = false;
+    }
 }
