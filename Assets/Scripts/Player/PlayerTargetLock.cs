@@ -7,6 +7,7 @@ public class PlayerTargetLock : MonoBehaviour
 {
     private PlayerController playerController;
     private Dodge dodge;
+    private PlayerCrouch playerCrouch;
     
     [SerializeField] private Camera cam;
     [SerializeField] private CinemachineFreeLook freelook;
@@ -27,6 +28,7 @@ public class PlayerTargetLock : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         dodge = GetComponent<Dodge>(); 
+        playerCrouch = GetComponent<PlayerCrouch>();
         maxAngle = 90f;
         freelook.m_XAxis.m_InputAxisName = "";
         freelook.m_YAxis.m_InputAxisName = "";
@@ -59,7 +61,7 @@ public class PlayerTargetLock : MonoBehaviour
         freelook.m_XAxis.m_InputAxisValue = mouseX; 
         freelook.m_YAxis.m_InputAxisValue = mouseY; 
 
-        if (Input.GetKeyDown(KeyCode.Q) && !playerController.isJumping && !playerController.sprinting && !dodge.isDodging)
+        if (Input.GetKeyDown(KeyCode.Q) && !playerController.isJumping && !playerController.sprinting && !dodge.isDodging && !playerCrouch.isCrouching)
         {
             AssignTarget();
         }

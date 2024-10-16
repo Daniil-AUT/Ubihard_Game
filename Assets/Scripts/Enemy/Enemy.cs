@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
    
     public int currencyReward = 20;
 
-    public float detectionRange = 5.0f;
+    public float detectionRange = 20.0f;
     private GameObject player;
     private Animator anim;
     private PlayerTargetLock playerTargetLock;
