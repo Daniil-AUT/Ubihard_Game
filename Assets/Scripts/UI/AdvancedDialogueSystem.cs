@@ -43,6 +43,8 @@ public class AdvancedDialogueSystem : MonoBehaviour
         HideDialoguePanel();
         SetupButtonListeners();
         closeButton.onClick.AddListener(EndDialogue); 
+        Cursor.visible = false; // Ensure cursor is hidden at the start
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the center of the screen
     }
 
     private void SetupButtonListeners()
@@ -59,6 +61,7 @@ public class AdvancedDialogueSystem : MonoBehaviour
         currentSequenceIndex = 0;
         ShowDialoguePanel();
         DisplayCurrentSequence();
+        EnableCursor(); // Enable cursor when starting dialogue
     }
 
     private void DisplayCurrentSequence()
@@ -110,6 +113,7 @@ public class AdvancedDialogueSystem : MonoBehaviour
     private void EndDialogue()
     {
         HideDialoguePanel();
+        DisableCursor(); // Disable cursor when ending dialogue
     }
 
     private void ShowDialoguePanel()
@@ -146,5 +150,17 @@ public class AdvancedDialogueSystem : MonoBehaviour
         {
             EndDialogue();
         }
+    }
+
+    private void EnableCursor()
+    {
+        Cursor.visible = true; // Show the cursor
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+    }
+
+    private void DisableCursor()
+    {
+        Cursor.visible = false; // Hide the cursor
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
     }
 }
