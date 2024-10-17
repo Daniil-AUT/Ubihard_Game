@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
     private Vector3 deathPosition;
-    private CharacterController characterController;
 
     private void Start()
     {
@@ -31,12 +30,6 @@ public class Player : MonoBehaviour
         if (animator == null)
         {
             Debug.LogError("Animator component not found on this GameObject or its children.");
-        }
-
-        characterController = GetComponent<CharacterController>();
-        if (characterController == null)
-        {
-            Debug.LogError("CharacterController component not found on this GameObject.");
         }
     }
 
@@ -80,24 +73,7 @@ public class Player : MonoBehaviour
     {
         isDead = true;
         playerController.enabled = false;  // Disable movement
-        characterController.enabled = false;  // Disable CharacterController
-
-        // Cast a ray downwards to find the ground
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, LayerMask.GetMask("Ground")))
-        {
-            // Set the death position slightly above the ground
-            deathPosition = hit.point + Vector3.up * 0.05f;
-        }
-        else
-        {
-            // If no ground is found, use the current position
-            deathPosition = transform.position;
-        }
-
-        // Set the player's position to the death position
-        transform.position = deathPosition;
-
+        deathPosition = transform.position; 
         if (animator != null)
         {
             animator.SetTrigger("Die");
@@ -141,7 +117,6 @@ public class Player : MonoBehaviour
         healthBar.SetHealth(currentHealth);
         transform.position = new Vector3(70.1f, 23f, 37.37f); // Respawn position
         
-        characterController.enabled = true; // Re-enable CharacterController
         playerController.enabled = true; // Re-enable movement
         
         if (animator != null)
@@ -230,4 +205,26 @@ public class Player : MonoBehaviour
         movementSpeed -= amount;
         Debug.Log($"Movement speed reverted to: {movementSpeed}");
     }
+
+    // New method to set player position (used when loading game)
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = newPosition;
+        playerPosition = newPosition;
+        if (playerController != null)
+        {
+            playerController.ResetController();
+        }
+    }
+
+    public void TeleportToPosition(Vector3 newPosition)
+{
+    transform.position = newPosition; // Teleport to the new position
+    playerPosition = newPosition; // Update player position
+    if (playerController != null)
+    {
+        playerController.ResetController(); // Reset the player controller if necessary
+    }
+}
+
 }
