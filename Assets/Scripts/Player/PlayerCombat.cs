@@ -12,6 +12,7 @@ public class PlayerCombat : MonoBehaviour
     float speedSmoothTime;
     public float currentSpeed;
     public bool isDodging;
+    public bool isInCombat;
     Vector3 moveInput;
     Vector3 dir;
     
@@ -19,7 +20,7 @@ public class PlayerCombat : MonoBehaviour
 
     private PlayerTargetLock targetLock;
     private PlayerController playerController;
-    private Dodge dodgeScript; 
+    private Dodge dodge; 
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +29,7 @@ public class PlayerCombat : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerController = GetComponent<PlayerController>();
         targetLock = GetComponent<PlayerTargetLock>();
-        dodgeScript = GetComponent<Dodge>(); 
+        dodge = GetComponent<Dodge>(); 
     }
 
     // Update is called once per frame
@@ -50,9 +51,9 @@ public class PlayerCombat : MonoBehaviour
     {
         moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        if (dodgeScript != null && !dodgeScript.isDodging && targetLock.isTargeting)
+        if (dodge != null && !dodge.isDodging && targetLock.isTargeting)
         {
-            dodgeScript.SetDodgeDirection(moveInput);
+            dodge.SetDodgeDirection(moveInput);
         }
 
         if (targetLock.isTargeting && currentTarget != null)
@@ -69,6 +70,7 @@ public class PlayerCombat : MonoBehaviour
     private void EngageCombatMode()
     {
         playerController.isInCombat = true;
+        isInCombat = true;
         anim.SetLayerWeight(anim.GetLayerIndex("CombatLayer"), 1);      
         anim.SetBool("IsInCombat", true); 
 
@@ -95,6 +97,7 @@ public class PlayerCombat : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
         playerController.isInCombat = false;
+        isInCombat = false;
         anim.SetLayerWeight(anim.GetLayerIndex("CombatLayer"), 0);
     }
 }

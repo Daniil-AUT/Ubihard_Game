@@ -6,16 +6,15 @@ public class PlayerController : MonoBehaviour
     public Transform cam;
     private CharacterController controller;
     private Animator anim;
+    private PlayerCrouch playerCrouch; 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
-    
 
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
     public bool sprinting;
-    private float currentSpeed;
-
+    public float currentSpeed;
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
@@ -29,37 +28,51 @@ public class PlayerController : MonoBehaviour
     float jumpTime;
     public float jumpDuration = 1f;
 
-    // Start is called before the first frame update
+    private Player playerScript;
+    private bool isDead = false;
+
     void Start()
     {
         currentSpeed = walkSpeed;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
+        playerCrouch = GetComponent<PlayerCrouch>();
+        if (anim == null)
+        {
+            Debug.LogError("Animator component not found on this GameObject or its children.");
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        playerScript = GetComponent<Player>();
+        if (playerScript == null)
+        {
+            Debug.LogError("Player script not found on this GameObject.");
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (isDead) return;
+
         isGrounded = Physics.CheckSphere(transform.position, 0.1f, 1);
         anim.SetBool("IsGrounded", isGrounded);
 
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -1;
-            anim.SetBool("IsJumping", false); 
+            anim.SetBool("IsJumping", false);
         }
 
-        if (!isAttacking && !isInCombat) 
+        if (!isAttacking && !isInCombat)
         {
             if (isDodging)
             {
-                currentSpeed = walkSpeed; 
+                currentSpeed = walkSpeed;
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKeyDown(KeyCode.LeftShift) && !playerCrouch.isCrouching)
                 {
                     currentSpeed = sprintSpeed;
                     sprinting = true;
@@ -95,12 +108,12 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetFloat("Speed", 0);
         }
-
         // Handle jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking && !isInCombat && !playerCrouch.isCrouching)
+
         {
-            StartCoroutine(HandleJump());  
-            anim.SetTrigger("Jump");  
+            StartCoroutine(HandleJump());
+            anim.SetTrigger("Jump");
             anim.SetBool("IsJumping", true);
         }
 
@@ -110,26 +123,106 @@ public class PlayerController : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
+
+        // Check for death condition
+        if (playerScript != null && playerScript.currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    IEnumerator HandleJump()
+    public void TakeDamage(float damage)
     {
-        canJump = false;
-        isJumping = true;
-        jumpTime = 0f;
-
-        while (jumpTime < jumpDuration)
+        if (playerScript != null)
         {
-            float normalizedTime = jumpTime / jumpDuration;
-            velocity.y = jumpCurve.Evaluate(normalizedTime) * jumpHeight;
-            jumpTime += Time.deltaTime;
+            playerScript.TakeDamage(damage);
+        }
+    }
+
+    private IEnumerator HandleJump()
+    {
+        isJumping = true;
+        float jumpStartTime = Time.time;
+
+        while (Time.time < jumpStartTime + jumpDuration)
+        {
+            float t = (Time.time - jumpStartTime) / jumpDuration;
+            velocity.y = jumpCurve.Evaluate(t) * jumpHeight;
             yield return null;
         }
 
-        velocity.y = 0;
-        yield return new WaitForSeconds(0.3f);
-        canJump = true;
         isJumping = false;
     }
 
+    public void Dodge()
+    {
+        if (!isDodging && !isAttacking)
+        {
+            isDodging = true;
+            currentSpeed = sprintSpeed;
+            anim.SetTrigger("Dodge");
+
+            StartCoroutine(StopDodging());
+        }
+    }
+
+    private IEnumerator StopDodging()
+    {
+        yield return new WaitForSeconds(0.5f);
+        isDodging = false;
+        currentSpeed = walkSpeed;
+    }
+
+    public void Attack()
+    {
+        if (!isAttacking && !isDodging)
+        {
+            isAttacking = true;
+            anim.SetTrigger("Attack");
+
+            StartCoroutine(StopAttacking());
+        }
+    }
+
+    private IEnumerator StopAttacking()
+    {
+        yield return new WaitForSeconds(1f);
+        isAttacking = false;
+    }
+
+    private void Die()
+    {
+        isDead = true;
+
+        // Disable CharacterController to prevent further movement
+        controller.enabled = false;
+
+        // Zero out velocity and stop any movement
+        velocity = Vector3.zero;
+
+        // Play the death animation
+        if (anim != null)
+        {
+            anim.SetTrigger("Die");
+        }
+
+    }
+
+
+
+
+    public void ResetController()
+    {
+        isDead = false;
+        velocity = Vector3.zero;
+        isJumping = false;
+        isDodging = false;
+        isAttacking = false;
+        currentSpeed = walkSpeed;
+        if (anim != null)
+        {
+            anim.Rebind();
+            anim.Update(0f);
+        }
+    }
 }
