@@ -5,6 +5,10 @@ using Cinemachine;
 
 public class PlayerTargetLock : MonoBehaviour
 {
+    private PlayerController playerController;
+    private Dodge dodge;
+    private PlayerCrouch playerCrouch;
+    
     [SerializeField] private Camera cam;
     [SerializeField] private CinemachineFreeLook freelook;
     [SerializeField] public Transform targetIcon;
@@ -22,6 +26,9 @@ public class PlayerTargetLock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playerController = GetComponent<PlayerController>();
+        dodge = GetComponent<Dodge>(); 
+        playerCrouch = GetComponent<PlayerCrouch>();
         maxAngle = 90f;
         freelook.m_XAxis.m_InputAxisName = "";
         freelook.m_YAxis.m_InputAxisName = "";
@@ -54,7 +61,7 @@ public class PlayerTargetLock : MonoBehaviour
         freelook.m_XAxis.m_InputAxisValue = mouseX; 
         freelook.m_YAxis.m_InputAxisValue = mouseY; 
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !playerController.isJumping && !playerController.sprinting && !dodge.isDodging && !playerCrouch.isCrouching)
         {
             AssignTarget();
         }

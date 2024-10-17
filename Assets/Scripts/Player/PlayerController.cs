@@ -6,16 +6,16 @@ public class PlayerController : MonoBehaviour
     public Transform cam;
     private CharacterController controller;
     private Animator anim;
+    private PlayerCrouch playerCrouch; 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    private Vector3 deathPosition;
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
     public bool sprinting;
-    private float currentSpeed;
-    private Player playerScript;
-    private bool isDead = false;
+    public float currentSpeed;
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
@@ -29,20 +29,19 @@ public class PlayerController : MonoBehaviour
     float jumpTime;
     public float jumpDuration = 1f;
 
-    // Health variables
-    public float maxHealth = 100f; // Set maximum health
-    private float currentHealth;
+    private Player playerScript;
+    private bool isDead = false;
 
-    // Reference to GameOverManager
-    public GameOverManager gameOverManager;
-
-    // Start is called before the first frame update
     void Start()
     {
-        currentHealth = maxHealth; // Initialize current health
         currentSpeed = walkSpeed;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
+        playerCrouch = GetComponent<PlayerCrouch>();
+        if (anim == null)
+        {
+            Debug.LogError("Animator component not found on this GameObject or its children.");
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -53,12 +52,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (isDead) return;
+
         isGrounded = Physics.CheckSphere(transform.position, 0.1f, 1);
         anim.SetBool("IsGrounded", isGrounded);
-        if (isDead) return;
 
         if (isGrounded && velocity.y < 0)
         {
@@ -74,7 +73,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKeyDown(KeyCode.LeftShift) && !playerCrouch.isCrouching)
                 {
                     currentSpeed = sprintSpeed;
                     sprinting = true;
@@ -110,9 +109,9 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetFloat("Speed", 0);
         }
-
         // Handle jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking && !isInCombat && !playerCrouch.isCrouching)
+
         {
             StartCoroutine(HandleJump());
             anim.SetTrigger("Jump");
@@ -126,35 +125,19 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
-        // Check if health is zero to trigger death
-        if (currentHealth <= 0)
+        // Check for death condition
+        if (playerScript != null && playerScript.currentHealth <= 0)
         {
             Die();
         }
     }
 
-    // Method to handle taking damage
     public void TakeDamage(float damage)
     {
-        if (isDead) return; // Prevent taking damage when dead
-
-        currentHealth -= damage;
-        Debug.Log($"Current Health: {currentHealth}");
-
-        // Check if player is dead
-        if (currentHealth <= 0)
+        if (playerScript != null)
         {
-            anim.SetTrigger("Die"); // Play death animation
-            Die();
+            playerScript.TakeDamage(damage);
         }
-    }
-
-    // Method to handle player death
-    public void Die()
-    {
-        isDead = true;
-        playerScript.Die(); // Call player's Die method to handle death animation and logic
-        gameOverManager.TriggerGameOver(); // Call game over manager
     }
 
     private IEnumerator HandleJump()
@@ -165,20 +148,19 @@ public class PlayerController : MonoBehaviour
         while (Time.time < jumpStartTime + jumpDuration)
         {
             float t = (Time.time - jumpStartTime) / jumpDuration;
-            velocity.y = jumpCurve.Evaluate(t) * jumpHeight; // Adjust height using the jump curve
+            velocity.y = jumpCurve.Evaluate(t) * jumpHeight;
             yield return null;
         }
 
         isJumping = false;
     }
 
-    // Method to handle dodging
     public void Dodge()
     {
         if (!isDodging && !isAttacking)
         {
             isDodging = true;
-            currentSpeed = sprintSpeed; // Speed up while dodging
+            currentSpeed = sprintSpeed;
             anim.SetTrigger("Dodge");
 
             StartCoroutine(StopDodging());
@@ -187,19 +169,17 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator StopDodging()
     {
-        yield return new WaitForSeconds(0.5f); // Adjust this based on your dodge duration
+        yield return new WaitForSeconds(0.5f);
         isDodging = false;
-        currentSpeed = walkSpeed; // Reset speed after dodging
+        currentSpeed = walkSpeed;
     }
 
-    // Method to handle attacking
     public void Attack()
     {
         if (!isAttacking && !isDodging)
         {
             isAttacking = true;
             anim.SetTrigger("Attack");
-            // Handle attack logic here
 
             StartCoroutine(StopAttacking());
         }
@@ -207,7 +187,37 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator StopAttacking()
     {
-        yield return new WaitForSeconds(1f); // Adjust this based on your attack animation length
+        yield return new WaitForSeconds(1f);
         isAttacking = false;
+    }
+
+    private void Die()
+    {
+        isDead = true;
+
+        // Disable CharacterController to prevent further movement
+        controller.enabled = false;
+
+        // Zero out velocity and stop any movement
+        velocity = Vector3.zero;
+
+    }
+
+
+
+
+    public void ResetController()
+    {
+        isDead = false;
+        velocity = Vector3.zero;
+        isJumping = false;
+        isDodging = false;
+        isAttacking = false;
+        currentSpeed = walkSpeed;
+        if (anim != null)
+        {
+            anim.Rebind();
+            anim.Update(0f);
+        }
     }
 }

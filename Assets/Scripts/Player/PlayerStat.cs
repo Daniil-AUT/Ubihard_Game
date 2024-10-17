@@ -10,9 +10,11 @@ public class Player : MonoBehaviour
     private bool isInvincible = false;
     public Vector3 playerPosition;
     public int currentCurrency = 0;
-    public Animator animator; // Ensure this is linked to your Animator component
     public GameOverManager gameOverManager;
     public PlayerController playerController;
+    private Animator animator;
+    private bool isDead = false;
+    private Vector3 deathPosition;
 
     private void Start()
     {
@@ -24,18 +26,10 @@ public class Player : MonoBehaviour
             playerController = GetComponent<PlayerController>();
         }
 
-        if (playerController == null)
-        {
-            Debug.LogError("PlayerController component not found on this GameObject.");
-        }
-
+        animator = GetComponentInChildren<Animator>();
         if (animator == null)
         {
-            animator = GetComponent<Animator>();
-            if (animator == null)
-            {
-                Debug.LogError("Animator component not found on this GameObject.");
-            }
+            Debug.LogError("Animator component not found on this GameObject or its children.");
         }
     }
 
@@ -59,44 +53,78 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Die()
-    {
-        // Trigger the death animation
-        if (animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
-        else
-        {
-            Debug.LogError("Animator is not set. Cannot play death animation.");
-        }
-
-        isInvincible = true;
-
-        // Disable player controller
-        if (playerController != null)
-        {
-            playerController.enabled = false;
-        }
-
-        // Start the coroutine to handle the game over logic
-        StartCoroutine(HandleDeath());
-    }
-
     public void TakeDamage(float damage)
     {
-        if (!isInvincible)
+        if (!isInvincible && !isDead)
         {
             currentHealth -= damage;
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
             Debug.Log($"Player took damage: {damage}. Current health: {currentHealth}");
 
-            if (currentHealth <= 0)
+            if (currentHealth <= 0 && !isDead)
             {
                 Die();
             }
         }
+    }
+
+    private void Die()
+    {
+        isDead = true;
+        playerController.enabled = false;  // Disable movement
+        deathPosition = transform.position; 
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+        StartCoroutine(ShowGameOverScreen());
+    }
+
+    private void LateUpdate()
+    {
+        if (isDead)
+        {
+            transform.position = deathPosition; // Lock the player's position
+        }
+    }
+
+    private IEnumerator ShowGameOverScreen()
+    {
+        if (animator != null)
+        {
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f); // Default wait time if animator is not found
+        }
+
+        if (gameOverManager != null)
+        {
+            gameOverManager.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameOverManager not assigned to Player script.");
+        }
+    }
+
+    public void ResetPlayer()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        healthBar.SetHealth(currentHealth);
+        transform.position = new Vector3(70.1f, 23f, 37.37f); // Respawn position
+        
+        playerController.enabled = true; // Re-enable movement
+        
+        if (animator != null)
+        {
+            animator.Rebind(); 
+            animator.Update(0f);
+        }
+        playerController.ResetController();
     }
 
     public void Heal(float amount)
@@ -146,42 +174,26 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Method to apply effects based on the item
     public void ApplyItemEffect(ItemSO item)
     {
         switch (item.id)
         {
             case 1: // Heal effect
-                Heal(20f); // Example healing amount
+                Heal(20f); 
                 break;
 
             case 2: // Speed increase
-                StartCoroutine(IncreaseSpeed(5f, 10f)); // Increase by 5 for 10 seconds
+                StartCoroutine(IncreaseSpeed(5f, 10f)); 
                 break;
 
             case 3: // Damage reduction effect
                 TakeDamage(20f);
-                Debug.Log("Damage has been reduced."); // Replace this with your damage reduction logic
+                Debug.Log("Damage has been reduced.");
                 break;
 
             default:
                 Debug.Log("No effect defined for this item.");
                 break;
-        }
-    }
-
-    private IEnumerator HandleDeath()
-    {
-        float animationDuration = 2f; // Adjust this based on your death animation length
-        yield return new WaitForSeconds(animationDuration);
-
-        if (gameOverManager != null)
-        {
-            gameOverManager.TriggerGameOver();
-        }
-        else
-        {
-            Debug.LogError("GameOverManager is not set. Cannot trigger game over.");
         }
     }
 
@@ -193,4 +205,26 @@ public class Player : MonoBehaviour
         movementSpeed -= amount;
         Debug.Log($"Movement speed reverted to: {movementSpeed}");
     }
+
+    // New method to set player position (used when loading game)
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = newPosition;
+        playerPosition = newPosition;
+        if (playerController != null)
+        {
+            playerController.ResetController();
+        }
+    }
+
+    public void TeleportToPosition(Vector3 newPosition)
+{
+    transform.position = newPosition; // Teleport to the new position
+    playerPosition = newPosition; // Update player position
+    if (playerController != null)
+    {
+        playerController.ResetController(); // Reset the player controller if necessary
+    }
+}
+
 }
