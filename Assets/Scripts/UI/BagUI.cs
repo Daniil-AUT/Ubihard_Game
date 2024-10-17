@@ -157,6 +157,21 @@ public class BagUI : MonoBehaviour
         ItemSO firstItem = inventory[0];
         ConsumeItem(firstItem);
     }
+    public void AddItemToBag(ItemSO itemSO)
+    {
+        if (itemSO != null && itemSO.id >= 1 && itemSO.id <= 3)
+        {
+            inventory.Add(itemSO);
+            GameObject itemGo = GameObject.Instantiate(itemPrefab);
+            itemGo.transform.SetParent(content.transform, false);
+            ItemUI itemUI = itemGo.GetComponent<ItemUI>();
+            itemUI.InitItem(itemSO);
+        }
+        else
+        {
+            Debug.LogWarning($"Item ID {itemSO.id} is not for BagUI.");
+        }
+    }
 
     public void ConsumeItem(ItemSO itemSO)
     {

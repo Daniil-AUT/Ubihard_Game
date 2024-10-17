@@ -53,9 +53,24 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(ItemSO item)
     {
         itemList.Add(item);
-        BagUI.Instance.AddItem(item);
+
+        if (item.id >= 1 && item.id <= 3)
+        {
+            BagUI.Instance.AddItemToBag(item); // Add items with ID 1-3 to BagUI
+        }
+        else if (item.id >= 4 && item.id <= 6)
+        {
+            // Automatically handled by InventoryUI.UpdateItemVisibility
+            Debug.Log($"Item ID {item.id} is reserved for InventoryUI.");
+        }
+        else
+        {
+            Debug.LogWarning($"Item ID {item.id} does not fall into BagUI or InventoryUI ranges.");
+        }
+
         Debug.Log($"Item {item.name} added to inventory.");
     }
+
 
     public void RemoveItem(ItemSO item)
     {

@@ -44,42 +44,32 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateItemVisibility()
     {
-        if (InventoryManager.Instance.HasItem(skeletonKeyItem))
+        foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
-            skeletonKeyIcon.gameObject.SetActive(true);
-            skeletonText.gameObject.SetActive(true);
-            skeletonText.text = GetItemCount(skeletonKeyItem).ToString(); 
-        }
-        else
-        {
-            skeletonKeyIcon.gameObject.SetActive(false);
-            skeletonText.gameObject.SetActive(false);
-        }
-
-        if (InventoryManager.Instance.HasItem(mpPotionItem))
-        {
-            mpPotionIcon.gameObject.SetActive(true);
-            mpPotionText.gameObject.SetActive(true);
-            mpPotionText.text = GetItemCount(mpPotionItem).ToString(); 
-        }
-        else
-        {
-            mpPotionIcon.gameObject.SetActive(false);
-            mpPotionText.gameObject.SetActive(false);
-        }
-
-        if (InventoryManager.Instance.HasItem(hpPotionItem))
-        {
-            hpPotionIcon.gameObject.SetActive(true);
-            hpPotionText.gameObject.SetActive(true);
-            hpPotionText.text = GetItemCount(hpPotionItem).ToString(); 
-        }
-        else
-        {
-            hpPotionIcon.gameObject.SetActive(false);
-            hpPotionText.gameObject.SetActive(false);
+            if (item.id >= 4 && item.id <= 6)
+            {
+                if (item == skeletonKeyItem)
+                {
+                    skeletonKeyIcon.gameObject.SetActive(true);
+                    skeletonText.gameObject.SetActive(true);
+                    skeletonText.text = GetItemCount(skeletonKeyItem).ToString();
+                }
+                else if (item == mpPotionItem)
+                {
+                    mpPotionIcon.gameObject.SetActive(true);
+                    mpPotionText.gameObject.SetActive(true);
+                    mpPotionText.text = GetItemCount(mpPotionItem).ToString();
+                }
+                else if (item == hpPotionItem)
+                {
+                    hpPotionIcon.gameObject.SetActive(true);
+                    hpPotionText.gameObject.SetActive(true);
+                    hpPotionText.text = GetItemCount(hpPotionItem).ToString();
+                }
+            }
         }
     }
+
 
     private int GetItemCount(ItemSO item)
     {
