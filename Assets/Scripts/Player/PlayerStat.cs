@@ -199,6 +199,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public int GetCurrency()
+    {
+        return currentCurrency;
+    }
+
+    // Method to apply effects based on the item
+
     public void ApplyItemEffect(ItemSO item)
     {
         switch (item.id)
