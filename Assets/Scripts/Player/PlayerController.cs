@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    private Vector3 deathPosition;
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
@@ -199,12 +200,6 @@ public class PlayerController : MonoBehaviour
 
         // Zero out velocity and stop any movement
         velocity = Vector3.zero;
-
-        // Play the death animation
-        if (anim != null)
-        {
-            anim.SetTrigger("Die");
-        }
 
     }
 
