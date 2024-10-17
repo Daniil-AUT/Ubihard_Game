@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
+    // Player controller
     private PlayerController playerController;
     private Animator anim;
     private DefaultSword sword;
