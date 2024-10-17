@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerCrouch : MonoBehaviour
 {
     private PlayerController playerController;
+    private PlayerCombat playerCombat;
     private Enemy enemy;
     private Animator anim;
     public bool isCrouching = false;
@@ -14,6 +15,7 @@ public class PlayerCrouch : MonoBehaviour
     void Start()
     {
         playerController = GetComponent<PlayerController>();
+        playerCombat = GetComponent<PlayerCombat>();        
         anim = GetComponentInChildren<Animator>();
         GameObject minotaur = GameObject.Find("Enemies/minotaur1");
         enemy = minotaur.GetComponent<Enemy>();
@@ -22,7 +24,7 @@ public class PlayerCrouch : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C)) 
+        if (Input.GetKeyDown(KeyCode.C) && !playerCombat.isInCombat) 
         {
             ToggleCrouch();
         }

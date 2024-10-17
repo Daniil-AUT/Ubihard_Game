@@ -12,6 +12,7 @@ public class PlayerCombat : MonoBehaviour
     float speedSmoothTime;
     public float currentSpeed;
     public bool isDodging;
+    public bool isInCombat;
     Vector3 moveInput;
     Vector3 dir;
     
@@ -69,6 +70,7 @@ public class PlayerCombat : MonoBehaviour
     private void EngageCombatMode()
     {
         playerController.isInCombat = true;
+        isInCombat = true;
         anim.SetLayerWeight(anim.GetLayerIndex("CombatLayer"), 1);      
         anim.SetBool("IsInCombat", true); 
 
@@ -95,6 +97,7 @@ public class PlayerCombat : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
         playerController.isInCombat = false;
+        isInCombat = false;
         anim.SetLayerWeight(anim.GetLayerIndex("CombatLayer"), 0);
     }
 }
