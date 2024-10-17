@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     public Transform cam;
     private CharacterController controller;
     private Animator anim;
+    private PlayerCrouch playerCrouch; 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
@@ -14,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public bool sprinting;
-    private float currentSpeed;
+    public float currentSpeed;
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
         currentSpeed = walkSpeed;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
+        playerCrouch = GetComponent<PlayerCrouch>();
         if (anim == null)
         {
             Debug.LogError("Animator component not found on this GameObject or its children.");
@@ -71,7 +73,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKeyDown(KeyCode.LeftShift) && !playerCrouch.isCrouching)
                 {
                     currentSpeed = sprintSpeed;
                     sprinting = true;
@@ -107,8 +109,9 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetFloat("Speed", 0);
         }
+        // Handle jump
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking && !isInCombat && !playerCrouch.isCrouching)
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && canJump && !isDodging && !isAttacking)
         {
             StartCoroutine(HandleJump());
             anim.SetTrigger("Jump");

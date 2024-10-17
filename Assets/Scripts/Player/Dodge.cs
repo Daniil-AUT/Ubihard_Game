@@ -10,9 +10,10 @@ public class Dodge : MonoBehaviour
     PlayerCombat playerCombat;
     Animator anim;
     CharacterController characterController;
+    PlayerAttack playerAttack;
+    PlayerCrouch playerCrouch;
 
     public bool isDodging = false;
-    public bool isAttacking = false;
     float dodgeTimer;
     float dodgeDistance = 2f;
     Vector2 dodgeDirectionInput; 
@@ -23,7 +24,9 @@ public class Dodge : MonoBehaviour
         playerController = GetComponent<PlayerController>(); 
         anim = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
-        playerCombat = GetComponent<PlayerCombat>(); ;
+        playerCombat = GetComponent<PlayerCombat>();
+        playerAttack = GetComponent<PlayerAttack>(); 
+        playerCrouch = GetComponent<PlayerCrouch>();
 
         Keyframe dodge_lastFrame = dodgeCurve[dodgeCurve.keys.Length - 1];
         dodgeTimer = dodge_lastFrame.time;
@@ -31,7 +34,7 @@ public class Dodge : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && !isDodging)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !playerAttack.isAttacking && !isDodging && !playerCrouch.isCrouching)
         {
             if (playerController.isInCombat)
             {

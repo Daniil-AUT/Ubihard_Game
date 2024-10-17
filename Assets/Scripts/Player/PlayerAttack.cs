@@ -3,15 +3,17 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    PlayerController playerController;
-    Animator anim;
-    DefaultSword sword;
-    Dodge dodge;
+    private PlayerController playerController;
+    private Animator anim;
+    private DefaultSword sword;
+    private Dodge dodge;
+    private PlayerCrouch playerCrouch;
 
     private float attackCooldown = 1f; 
     private float lastAttackTime = 0f; 
     private bool isComboActive = false; 
     private bool canPerformSecondAttack = false; 
+    public bool isAttacking = false;
 
     void Start()
     {
@@ -19,11 +21,12 @@ public class PlayerAttack : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         sword = GetComponentInChildren<DefaultSword>();
         dodge = GetComponent<Dodge>();
+        playerCrouch = GetComponent<PlayerCrouch>();
     }
 
     void Update()
     {
-        if (!playerController.isDodging && !playerController.isJumping && !playerController.sprinting)
+        if (!playerController.isDodging && !playerController.isJumping && !playerController.sprinting && !playerCrouch.isCrouching)
         {
             if (Input.GetMouseButtonDown(0)) 
             {
@@ -43,7 +46,7 @@ public class PlayerAttack : MonoBehaviour
     {
         isComboActive = true; 
         playerController.isAttacking = true; 
-        dodge.isAttacking = true;
+        isAttacking = true;
         canPerformSecondAttack = true; 
         anim.SetTrigger("Attack1");
         lastAttackTime = Time.time;
@@ -73,7 +76,7 @@ public class PlayerAttack : MonoBehaviour
         canPerformSecondAttack = false; 
         isComboActive = false; 
         playerController.isAttacking = false; 
-        dodge.isAttacking = false;
+        isAttacking = false;
     }
 
     private IEnumerator ResetAttackState(float delay)
