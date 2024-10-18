@@ -10,7 +10,7 @@ public class ItemSO : ScriptableObject
     public string itemname;
     public ItemType itemType;
     public string description;
-    public List<ItemProperty> propertyList;
+    public List<Property> propertyList;
     public Sprite icon;
     public GameObject prefab;
 }
@@ -23,13 +23,22 @@ public enum ItemType
 }
 
 [Serializable]
-public class ItemProperty
+public class Property
 {
-    public ItemPropertyType propertytype;
+    public PropertyType propertytype;
     public int value;
+    public Property()
+    { 
+        
+    }
+    public Property(PropertyType propertyType, int value)
+    { 
+        this.propertytype = propertyType;
+        this.value = value;
+    }
 }
 
-public enum ItemPropertyType
+public enum PropertyType
 {
     HP,
     MP,

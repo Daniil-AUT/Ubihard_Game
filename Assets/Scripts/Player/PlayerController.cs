@@ -1,5 +1,7 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
@@ -202,9 +204,6 @@ public class PlayerController : MonoBehaviour
         velocity = Vector3.zero;
 
     }
-
-
-
 
     public void ResetController()
     {
