@@ -87,6 +87,7 @@ public class BagUI : MonoBehaviour
             return;
         }
 
+        // Check if the item is in the inventory
         if (inventory.Remove(itemSO))
         {
             foreach (Transform child in content.transform)
@@ -105,6 +106,17 @@ public class BagUI : MonoBehaviour
             if (player != null)
             {
                 player.ApplyItemEffect(itemSO);
+
+                // Check if the item is an MS potion
+                if (itemSO.id == 2) 
+                {
+                    PlayerController playerController = player.GetComponent<PlayerController>();
+                    if (playerController != null)
+                    {
+                        float speedBoostAmount = Random.Range(5f, 10f); 
+                        playerController.ApplySpeedBoost(speedBoostAmount);
+                    }
+                }
             }
             else
             {
@@ -116,6 +128,7 @@ public class BagUI : MonoBehaviour
             Debug.LogWarning($"Item {itemSO.itemname} not found in inventory.");
         }
     }
+
 
     public void AddItem(ItemSO itemSO)
     {

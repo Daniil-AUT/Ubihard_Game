@@ -5,8 +5,9 @@ public class Player : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
-    public float movementSpeed = 5f;
+    public int movementSpeed = 5;
     public int attackDamage = 20;
+    public int defense = 1;
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;
@@ -16,6 +17,14 @@ public class Player : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
     private Vector3 deathPosition;
+
+    public int level = 1;
+    public int currentEXP = 0;
+    public int expToNextLevel = 100; 
+    public int expReward = 50; 
+
+
+
 
     private void Start()
     {
@@ -58,7 +67,7 @@ public class Player : MonoBehaviour
     {
         if (!isInvincible && !isDead)
         {
-            currentHealth -= damage;
+            currentHealth -= (damage- defense);
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
             Debug.Log($"Player took damage: {damage}. Current health: {currentHealth}");
@@ -85,7 +94,7 @@ public class Player : MonoBehaviour
     {
         if (isDead)
         {
-            transform.position = deathPosition; // Lock the player's position
+            transform.position = deathPosition;
         }
     }
 
@@ -97,7 +106,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(1f); // Default wait time if animator is not found
+            yield return new WaitForSeconds(1f);
         }
 
         if (gameOverManager != null)
@@ -115,9 +124,9 @@ public class Player : MonoBehaviour
         isDead = false;
         currentHealth = maxHealth;
         healthBar.SetHealth(currentHealth);
-        transform.position = new Vector3(70.1f, 23f, 37.37f); // Respawn position
+        transform.position = new Vector3(70.1f, 23f, 37.37f); 
         
-        playerController.enabled = true; // Re-enable movement
+        playerController.enabled = true; 
         
         if (animator != null)
         {
@@ -199,12 +208,17 @@ public class Player : MonoBehaviour
 
     private IEnumerator IncreaseSpeed(float amount, float duration)
     {
-        movementSpeed += amount;
+        // Cast the float amount to int when modifying the movementSpeed
+        movementSpeed += (int)amount;
         Debug.Log($"Movement speed increased to: {movementSpeed}");
+
         yield return new WaitForSeconds(duration);
-        movementSpeed -= amount;
+
+        // Revert the movement speed after duration
+        movementSpeed -= (int)amount;
         Debug.Log($"Movement speed reverted to: {movementSpeed}");
     }
+
 
     // New method to set player position (used when loading game)
     public void SetPosition(Vector3 newPosition)
@@ -219,11 +233,11 @@ public class Player : MonoBehaviour
 
     public void TeleportToPosition(Vector3 newPosition)
 {
-    transform.position = newPosition; // Teleport to the new position
-    playerPosition = newPosition; // Update player position
+    transform.position = newPosition; 
+    playerPosition = newPosition; 
     if (playerController != null)
     {
-        playerController.ResetController(); // Reset the player controller if necessary
+        playerController.ResetController(); 
     }
 }
 

@@ -5,6 +5,7 @@ public class Enemy : MonoBehaviour
 {
     public int HP = 100;
     public int currencyReward = 20;
+    public int expReward = 50; // Experience points to reward when defeated
 
     public float detectionRange = 20.0f;
 
@@ -92,10 +93,10 @@ public class Enemy : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage(attackDamage); // Player takes damage
+                playerStats.TakeDamage(attackDamage); 
             }
-            attackTimer = 0f; // Reset the attack timer
-            anim.SetTrigger("Attack"); // Trigger attack animation if available
+            attackTimer = 0f; 
+            anim.SetTrigger("Attack"); 
         }
     }
 
@@ -115,11 +116,12 @@ public class Enemy : MonoBehaviour
         {
             GetComponent<Collider>().enabled = false;
 
-            // Give currency to player when enemy dies
+            // Give currency and experience to player when enemy dies
             Player playerStats = FindObjectOfType<Player>();
             if (playerStats != null)
             {
                 playerStats.AddCurrency(currencyReward);
+                playerStats.GetComponent<PlayerXP>().AddEXP(expReward); 
             }
 
             DropLoot();
@@ -140,7 +142,13 @@ public class Enemy : MonoBehaviour
         int count = Random.Range(1, 6);
         for (int i = 0; i < count; i++)
         {
-            ItemSO item = ItemDBManager.Instance.GetRandomItem();
+            ItemSO item = null;
+
+            do
+            {
+                item = ItemDBManager.Instance.GetRandomItem();
+            }
+            while (item != null && item.id == 6);
 
             if (item != null && item.prefab != null)
             {
@@ -151,5 +159,16 @@ public class Enemy : MonoBehaviour
                 po.itemSO = item;
             }
         }
+
+        Player playerStats = FindObjectOfType<Player>();
+        if (playerStats != null)
+        {
+            PlayerXP playerXP = playerStats.GetComponent<PlayerXP>();
+            if (playerXP != null)
+            {
+                playerXP.AddEXP(expReward); 
+            }
+        }
     }
+
 }

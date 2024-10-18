@@ -9,11 +9,11 @@ public class PlayerStatsDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI attackDamageText;
     [SerializeField] private TextMeshProUGUI movementSpeedText;
 
+
     [Header("Stats")]
-    public float baseDefense = 10f;
-    private float currentDefense;
-    private float currentAttackDamage;
-    private float currentMovementSpeed;
+    private int currentDefense;
+    private int currentAttackDamage;
+    private int currentMovementSpeed;
 
     // References to other components
     private Player playerScript;
@@ -32,9 +32,9 @@ public class PlayerStatsDisplay : MonoBehaviour
         }
 
         // Initialize current stats
-        currentDefense = baseDefense;
-        currentAttackDamage = 10f; // Default attack damage
-        currentMovementSpeed = playerScript.movementSpeed;
+        currentDefense = playerScript.defense;
+        currentAttackDamage = playerScript.attackDamage;
+        currentMovementSpeed = Mathf.RoundToInt(playerScript.movementSpeed); // Explicit conversion
 
         // Initial UI update
         UpdateAllStatsDisplay();
@@ -42,26 +42,26 @@ public class PlayerStatsDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (playerController != null && currentMovementSpeed != playerController.currentSpeed)
+        if (playerController != null && currentMovementSpeed != Mathf.RoundToInt(playerController.currentSpeed))
         {
-            currentMovementSpeed = playerController.currentSpeed;
+            currentMovementSpeed = Mathf.RoundToInt(playerController.currentSpeed); // Explicit conversion
             UpdateMovementSpeedDisplay();
         }
     }
 
-    public void UpdateDefense(float newDefense)
+    public void UpdateDefense(int newDefense)
     {
         currentDefense = newDefense;
         UpdateDefenseDisplay();
     }
 
-    public void UpdateAttackDamage(float newDamage)
+    public void UpdateAttackDamage(int newDamage)
     {
         currentAttackDamage = newDamage;
         UpdateAttackDisplay();
     }
 
-    public void UpdateMovementSpeed(float newSpeed)
+    public void UpdateMovementSpeed(int newSpeed)
     {
         currentMovementSpeed = newSpeed;
         UpdateMovementSpeedDisplay();
@@ -99,26 +99,26 @@ public class PlayerStatsDisplay : MonoBehaviour
     }
 
     // Method to temporarily modify stats (for power-ups, debuffs, etc.)
-    public IEnumerator TemporaryStatModifier(string statType, float amount, float duration)
+    public IEnumerator TemporaryStatModifier(string statType, int amount, int duration)
     {
         switch (statType.ToLower())
         {
             case "defense":
-                float originalDefense = currentDefense;
+                int originalDefense = currentDefense;
                 UpdateDefense(currentDefense + amount);
                 yield return new WaitForSeconds(duration);
                 UpdateDefense(originalDefense);
                 break;
 
             case "attack":
-                float originalAttack = currentAttackDamage;
+                int originalAttack = currentAttackDamage;
                 UpdateAttackDamage(currentAttackDamage + amount);
                 yield return new WaitForSeconds(duration);
                 UpdateAttackDamage(originalAttack);
                 break;
 
             case "speed":
-                float originalSpeed = currentMovementSpeed;
+                int originalSpeed = currentMovementSpeed;
                 UpdateMovementSpeed(currentMovementSpeed + amount);
                 yield return new WaitForSeconds(duration);
                 UpdateMovementSpeed(originalSpeed);
@@ -127,7 +127,7 @@ public class PlayerStatsDisplay : MonoBehaviour
     }
 
     // Method to apply permanent stat modifications (from equipment, level-ups, etc.)
-    public void ApplyPermanentStatModifier(string statType, float amount)
+    public void ApplyPermanentStatModifier(string statType, int amount)
     {
         switch (statType.ToLower())
         {

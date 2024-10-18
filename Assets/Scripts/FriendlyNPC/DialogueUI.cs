@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DialogueUI : MonoBehaviour
 {
     public static DialogueUI Instance { get; private set; }
+    public static bool isDialogueFinished = false; 
 
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI contentText;
@@ -14,6 +15,9 @@ public class DialogueUI : MonoBehaviour
     private int contentIndex = 0;
 
     public QuestPanelSystem questPanelSystem;
+
+    // New variable to control if the dialogue is already shown
+    private bool dialogueShown = false;
 
     private void Awake()
     {
@@ -33,6 +37,9 @@ public class DialogueUI : MonoBehaviour
 
     public void Show(string npcName, string[] content)
     {
+        // Only show dialogue if it hasn't been shown yet
+        if (dialogueShown) return;
+
         nameText.text = npcName;
         contentList = new List<string>(content);
         contentIndex = 0;
@@ -40,6 +47,9 @@ public class DialogueUI : MonoBehaviour
         gameObject.SetActive(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        // Mark dialogue as shown
+        dialogueShown = true;
     }
 
     public void Hide()
@@ -55,7 +65,7 @@ public class DialogueUI : MonoBehaviour
         if (contentIndex >= contentList.Count)
         {
             Hide();
-            CompleteDialogue(); 
+            CompleteDialogue();
         }
         else
         {
@@ -71,9 +81,9 @@ public class DialogueUI : MonoBehaviour
     // New method to show quest dialogue
     public void ShowQuestDialogue(string questTitle, string questDescription)
     {
-        nameText.text = questTitle; 
+        nameText.text = questTitle;
         contentText.text = questDescription;
-        gameObject.SetActive(true); 
+        gameObject.SetActive(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -85,5 +95,7 @@ public class DialogueUI : MonoBehaviour
         {
             questPanelSystem.ActivateQuest(questPanelSystem.currentQuest);
         }
+
+        isDialogueFinished = true;
     }
 }
