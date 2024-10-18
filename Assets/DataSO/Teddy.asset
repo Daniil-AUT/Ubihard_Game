@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7b306d86f8b72b4f9b339de1daad583, type: 3}
-  m_Name: Sword
+  m_Name: Teddy
   m_EditorClassIdentifier: 
-  id: 4
+  id: 6
   itemname: Metal Sword
   itemType: 0
   description: The best sword in the village!
   propertyList:
   - propertytype: 4
     value: 30
-  icon: {fileID: 21300000, guid: a62bb8026188bcb4e8ac9684b2d1d845, type: 3}
-  prefab: {fileID: 1791171268332113084, guid: bffef6b52ac849c49b3eeb0aba6d06f7, type: 3}
+  icon: {fileID: 21300000, guid: 4e09871893952a64fbf3f49cd752307b, type: 3}
+  prefab: {fileID: 2788726836488354371, guid: adaf965d4c9d35241a65ac4753a393bd, type: 3}

@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7b306d86f8b72b4f9b339de1daad583, type: 3}
-  m_Name: Sword
+  m_Name: Shield
   m_EditorClassIdentifier: 
-  id: 4
-  itemname: Metal Sword
+  id: 5
+  itemname: Shield
   itemType: 0
-  description: The best sword in the village!
+  description: Protection
   propertyList:
-  - propertytype: 4
+  - propertytype: 5
     value: 30
-  icon: {fileID: 21300000, guid: a62bb8026188bcb4e8ac9684b2d1d845, type: 3}
-  prefab: {fileID: 1791171268332113084, guid: bffef6b52ac849c49b3eeb0aba6d06f7, type: 3}
+  icon: {fileID: 21300000, guid: fefda1d2ace558242b52d8f2ee31d224, type: 3}
+  prefab: {fileID: 1680521860787764, guid: 550d930dcabe1fb4c902db30f4544e19, type: 3}

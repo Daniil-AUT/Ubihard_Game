@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class SaveLoadManager : MonoBehaviour
 {
-    public Player playerTeleport;
+    public Player playerTeleport; // Reference to your Player object
     private static SaveLoadManager _instance;
 
     public static SaveLoadManager Instance
@@ -27,33 +27,30 @@ public class SaveLoadManager : MonoBehaviour
 
     private string SavePath => Path.Combine(Application.persistentDataPath, "gamesave.dat");
 
-    // Reference to your ItemDBSO
-    public ItemDBSO itemDatabase; // Drag your Item Database asset here in the Inspector
+    public ItemDBSO itemDatabase; // Reference to your item database
 
     public void SaveGame()
     {
         SaveData saveData = new SaveData();
 
-        // Save player health
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
             saveData.playerHealth = player.currentHealth;
-            saveData.playerCurrency = player.currentCurrency; // Save player currency
+            saveData.playerCurrency = player.currentCurrency;
+            saveData.playerPosition = new SerializableVector3(player.transform.position); // Convert Vector3 to SerializableVector3
         }
         else
         {
             Debug.LogError("Object Player doesn't exist");
         }
 
-        // Save inventory items
         saveData.inventoryItemIDs = new List<int>();
         foreach (ItemSO item in BagUI.Instance.inventory)
         {
-            saveData.inventoryItemIDs.Add(item.id); // Save the item ID
+            saveData.inventoryItemIDs.Add(item.id);
         }
 
-        // Serialize and save data
         BinaryFormatter formatter = new BinaryFormatter();
         using (FileStream stream = new FileStream(SavePath, FileMode.Create))
         {
@@ -64,48 +61,66 @@ public class SaveLoadManager : MonoBehaviour
     }
 
     public void LoadGame()
+{
+    if (File.Exists(SavePath))
     {
-        if (File.Exists(SavePath))
+        BinaryFormatter formatter = new BinaryFormatter();
+        using (FileStream stream = new FileStream(SavePath, FileMode.Open))
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            using (FileStream stream = new FileStream(SavePath, FileMode.Open))
+            SaveData saveData = formatter.Deserialize(stream) as SaveData;
+
+            Player player = FindObjectOfType<Player>();
+            if (player != null)
             {
-                SaveData saveData = formatter.Deserialize(stream) as SaveData;
+                player.currentHealth = saveData.playerHealth;
+                player.healthBar.SetHealth(saveData.playerHealth);
+                player.currentCurrency = saveData.playerCurrency;
+                player.UpdateCurrencyUI();
 
-                // Load player data (health and currency)
-                Player player = FindObjectOfType<Player>();
-                if (player != null)
+                // Teleport the player to the saved position
+                player.TeleportToPosition(saveData.playerPosition.ToVector3()); // Call the teleport method
+
+            }
+            else
+            {
+                Debug.LogError("Object Player doesn't exist");
+            }
+
+            foreach (int itemId in saveData.inventoryItemIDs)
+            {
+                ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId);
+                if (item != null)
                 {
-                    player.currentHealth = saveData.playerHealth;
-                    player.healthBar.SetHealth(saveData.playerHealth); 
-
-                    player.currentCurrency = saveData.playerCurrency;
-                    player.UpdateCurrencyUI(); 
+                    BagUI.Instance.AddItem(item);
                 }
                 else
                 {
-                    Debug.LogError("Object Player doesn't exist");
-                }
-
-                // Load inventory items
-                foreach (int itemId in saveData.inventoryItemIDs)
-                {
-                    ItemSO item = itemDatabase.itemlist.Find(i => i.id == itemId); 
-                    if (item != null)
-                    {
-                        BagUI.Instance.AddItem(item); 
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Item with ID {itemId} not found.");
-                    }
+                    Debug.LogWarning($"Item with ID {itemId} not found.");
                 }
             }
-            Debug.Log("Game loaded successfully");
+        }
+        Debug.Log("Game loaded successfully");
+    }
+    else
+    {
+        Debug.LogWarning("No save file found!");
+    }
+}
+
+
+
+    // New method to get the player's current position as a SerializableVector3
+    public SerializableVector3 GetPlayerPosition()
+    {
+        Player player = FindObjectOfType<Player>();
+        if (player != null)
+        {
+            return new SerializableVector3(player.transform.position);
         }
         else
         {
-            Debug.LogWarning("No save file found!");
+            Debug.LogError("Object Player doesn't exist");
+            return null; // or handle as appropriate
         }
     }
 }
@@ -114,6 +129,27 @@ public class SaveLoadManager : MonoBehaviour
 public class SaveData
 {
     public float playerHealth;
-    public int playerCurrency; 
+    public int playerCurrency;
+    public SerializableVector3 playerPosition;
     public List<int> inventoryItemIDs;
+}
+
+[System.Serializable]
+public class SerializableVector3
+{
+    public float x;
+    public float y;
+    public float z;
+    public SerializableVector3(Vector3 vector)
+    {
+        x = vector.x;
+        y = vector.y;
+        z = vector.z;
+    }
+
+    // Method to convert back to Vector3
+    public Vector3 ToVector3()
+    {
+        return new Vector3(x, y, z);
+    }
 }

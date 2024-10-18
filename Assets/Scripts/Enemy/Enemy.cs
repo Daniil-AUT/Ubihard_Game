@@ -137,7 +137,7 @@ public class Enemy : MonoBehaviour
 
     virtual protected void DropLoot()
     {
-        int count = Random.Range(1, 4);
+        int count = Random.Range(1, 6);
         for (int i = 0; i < count; i++)
         {
             ItemSO item = ItemDBManager.Instance.GetRandomItem();
