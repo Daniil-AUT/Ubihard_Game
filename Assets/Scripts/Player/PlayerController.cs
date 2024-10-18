@@ -1,5 +1,7 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
@@ -207,9 +209,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
-
-
 
     public void ResetController()
     {
