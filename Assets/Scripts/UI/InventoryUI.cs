@@ -15,7 +15,7 @@ public class InventoryUI : MonoBehaviour
     public TMP_Text damageText;     // Changed from mpPotionText to damageText
     public TMP_Text teddyBearText;  // Changed from hpPotionText to teddyBearText
 
-    public PlayerController playerStat;
+    public Player playerStat;
 
     // Updated item references to match new item types
     [SerializeField] private ItemSO armorItem;         // Changed from skeletonKeyItem to armorItem

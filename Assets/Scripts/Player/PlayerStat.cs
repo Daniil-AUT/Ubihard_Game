@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     public float maxHealth = 100f;
     public float currentHealth;
     public float movementSpeed = 5f;
+    public int attackDamage = 20;
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;

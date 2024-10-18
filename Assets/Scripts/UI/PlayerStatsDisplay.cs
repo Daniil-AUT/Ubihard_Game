@@ -42,7 +42,6 @@ public class PlayerStatsDisplay : MonoBehaviour
 
     private void Update()
     {
-        // Update movement speed in real-time since it can change during gameplay
         if (playerController != null && currentMovementSpeed != playerController.currentSpeed)
         {
             currentMovementSpeed = playerController.currentSpeed;
