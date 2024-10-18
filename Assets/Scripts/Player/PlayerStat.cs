@@ -73,7 +73,6 @@ public class Player : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        playerController.enabled = false;  // Disable movement
         deathPosition = transform.position; 
         if (animator != null)
         {

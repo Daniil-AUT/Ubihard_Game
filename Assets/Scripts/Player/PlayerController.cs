@@ -195,9 +195,6 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
 
-        // Disable CharacterController to prevent further movement
-        controller.enabled = false;
-
         // Zero out velocity and stop any movement
         velocity = Vector3.zero;
 
