@@ -13,7 +13,6 @@ public class ItemSO : ScriptableObject
     public List<ItemProperty> propertyList;
     public Sprite icon;
     public GameObject prefab;
-    public int cost;
 }
 
 public enum ItemType
@@ -38,6 +37,5 @@ public enum ItemPropertyType
     Speed,
     Attack,
     Defence,
-    CurrencyValue, //value of item sold
-    ItemCost //cost of item purchsed
+    CurrencyValue
 }

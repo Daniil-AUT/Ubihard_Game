@@ -8,8 +8,6 @@ public class ShopkeeperUI : MonoBehaviour
 {
     public static ShopkeeperUI Instance { get; private set;}
     
-    public GameObject ItemBuyPanel;
-
     public Button buyButton;
     public Button sellButton;
     public Button leaveButton;
@@ -31,7 +29,6 @@ public class ShopkeeperUI : MonoBehaviour
         sellButton.onClick.AddListener(OnSellButtonClick);
         leaveButton.onClick.AddListener(OnLeaveButtonClick);
         Hide();
-        ItemBuyPanel.SetActive(false);
     }
 
     //show ui and mouse
@@ -54,7 +51,6 @@ public class ShopkeeperUI : MonoBehaviour
     private void OnBuyButtonClick()
     {
         // buying items from the shop
-        ItemBuyPanel.SetActive(true);
         Debug.Log("Buy clicked");
         // Add item purchasing logic here...
     }
@@ -67,7 +63,7 @@ public class ShopkeeperUI : MonoBehaviour
         // Add item selling logic here...
     }
 
-    //leave button click
+    //;leave button click
     private void OnLeaveButtonClick()
     {
         Hide(); //close the shop UI
