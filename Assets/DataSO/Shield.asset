@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Shield
   m_EditorClassIdentifier: 
   id: 5
-  itemname: Metal Sword
+  itemname: Shield
   itemType: 0
-  description: The best sword in the village!
+  description: Protection
   propertyList:
-  - propertytype: 4
+  - propertytype: 5
     value: 30
-  icon: {fileID: 21300000, guid: 6142f4611089d224f96d741ffd0baa0c, type: 3}
-  prefab: {fileID: 1680521860787764, guid: 0aae23549399ae240aa3fcaf1b7ae6b0, type: 3}
+  icon: {fileID: 21300000, guid: fefda1d2ace558242b52d8f2ee31d224, type: 3}
+  prefab: {fileID: 1680521860787764, guid: 550d930dcabe1fb4c902db30f4544e19, type: 3}

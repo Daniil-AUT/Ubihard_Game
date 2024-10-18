@@ -3241,7 +3241,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ab3d84a22ef491b44b79721c6c45434c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a62bb8026188bcb4e8ac9684b2d1d845, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -14675,12 +14675,11 @@ MonoBehaviour:
   mpPotionText: {fileID: 1946240214}
   hpPotionText: {fileID: 1638763}
   playerStat: {fileID: 376595917}
-  skeletonKeyItem: {fileID: 11400000, guid: 20c071558aac3404a82d2de161dfdca7, type: 2}
-  mpPotionItem: {fileID: 11400000, guid: 0d0a6a1f067b571439f6cf7a78a0fbe7, type: 2}
-  hpPotionItem: {fileID: 11400000, guid: b3614cc6075af844382c51eb6b657a62, type: 2}
+  skeletonKeyItem: {fileID: 11400000, guid: 992b08c2669ca904197b7cabe9404c12, type: 2}
+  mpPotionItem: {fileID: 11400000, guid: e110070c72e10774c95b081222ad27d5, type: 2}
+  hpPotionItem: {fileID: 11400000, guid: ae4464f2ead15a54fa4faa4af92ee3bf, type: 2}
   healValue: 0
-  takeDamagelValue: 0
-  moveSpeedValue: 0
+  takeDamageValue: 0
 --- !u!1 &1509532538
 GameObject:
   m_ObjectHideFlags: 0
@@ -15377,8 +15376,10 @@ MonoBehaviour:
   - I lost my teddy bear can you help me?
   - Thank you
   isQuestGiver: 0
-  questTitle: 
-  questDescription: 
+  quest:
+    questTitle: 
+    questDescription: 
+    isCompleted: 0
 --- !u!1001 &1600624450
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16172,7 +16173,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 472e7bb6c10556f4db8796a0ca699a7c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4e09871893952a64fbf3f49cd752307b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17587,6 +17588,7 @@ MonoBehaviour:
   nameText: {fileID: 867250265}
   contentText: {fileID: 916383201}
   nextButton: {fileID: 1263317532}
+  questPanelSystem: {fileID: 206684079}
 --- !u!1 &1856482948
 GameObject:
   m_ObjectHideFlags: 0
@@ -17895,7 +17897,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7c0825db92846094aaabace0f83ceb40, type: 3}
+  m_Sprite: {fileID: 21300000, guid: fefda1d2ace558242b52d8f2ee31d224, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

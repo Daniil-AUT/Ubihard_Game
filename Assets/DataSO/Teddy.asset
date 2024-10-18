@@ -19,5 +19,5 @@ MonoBehaviour:
   propertyList:
   - propertytype: 4
     value: 30
-  icon: {fileID: 21300000, guid: d50bb5d8ea39df24ea6a452b02ee65e6, type: 3}
-  prefab: {fileID: 1791171268332113084, guid: bffef6b52ac849c49b3eeb0aba6d06f7, type: 3}
+  icon: {fileID: 21300000, guid: 4e09871893952a64fbf3f49cd752307b, type: 3}
+  prefab: {fileID: 2788726836488354371, guid: adaf965d4c9d35241a65ac4753a393bd, type: 3}

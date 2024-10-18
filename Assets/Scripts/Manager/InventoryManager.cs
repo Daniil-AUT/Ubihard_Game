@@ -69,6 +69,9 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"Item {item.name} added to inventory.");
+
+        // Refresh UI to display the newly added item
+        InventoryUI.Instance.RefreshUI(); // Ensure InventoryUI has a reference to the InventoryUI instance
     }
 
 

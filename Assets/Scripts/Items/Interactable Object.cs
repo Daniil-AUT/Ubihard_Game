@@ -29,7 +29,6 @@ public class InteractableObject : MonoBehaviour
 
     protected virtual void Interact()
     {
-        // Override in derived classes (e.g., NPC interaction).
         Debug.Log("Interacting with Interactable Object.");
     }
 }

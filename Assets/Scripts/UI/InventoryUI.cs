@@ -4,72 +4,91 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
-    public Image skeletonKeyIcon;
-    public Image mpPotionIcon;
-    public Image hpPotionIcon;
+    public static InventoryUI Instance { get; private set; } // Singleton instance
 
-    public TMP_Text skeletonText;
-    public TMP_Text mpPotionText;
-    public TMP_Text hpPotionText;
+    // Update variable names to reflect new items
+    public Image armorIcon;        // Changed from skeletonKeyIcon to armorIcon
+    public Image damageIcon;       // Changed from mpPotionIcon to damageIcon
+    public Image teddyBearIcon;    // Changed from hpPotionIcon to teddyBearIcon
+
+    public TMP_Text armorText;     // Changed from skeletonText to armorText
+    public TMP_Text damageText;     // Changed from mpPotionText to damageText
+    public TMP_Text teddyBearText;  // Changed from hpPotionText to teddyBearText
 
     public PlayerController playerStat;
-    
-    [SerializeField] private ItemSO skeletonKeyItem;
-    [SerializeField] private ItemSO mpPotionItem;
-    [SerializeField] private ItemSO hpPotionItem;
-    public int healValue;
-    public int takeDamagelValue;
 
-    public int moveSpeedValue;
+    // Updated item references to match new item types
+    [SerializeField] private ItemSO armorItem;         // Changed from skeletonKeyItem to armorItem
+    [SerializeField] private ItemSO damageItem;        // Changed from mpPotionItem to damageItem
+    [SerializeField] private ItemSO teddyBearItem;     // Changed from hpPotionItem to teddyBearItem
 
     private Player player;
+
+    private void Awake()
+    {
+        // Implement the Singleton pattern
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     private void Start()
     {
         player = FindObjectOfType<Player>();
-        
-        healValue = (int) hpPotionItem.propertyList[0].value; 
-        takeDamagelValue = (int) mpPotionItem.propertyList[0].value;
-        moveSpeedValue = (int) mpPotionItem.propertyList[0].value;
 
-        Debug.Log($"Heal Value {healValue}");
+        // Set initial item properties
+        UpdateItemProperties(armorItem, armorIcon, armorText);
+        UpdateItemProperties(damageItem, damageIcon, damageText);
+        UpdateItemProperties(teddyBearItem, teddyBearIcon, teddyBearText);
+
         HideAllItems();
+        UpdateItemVisibility(); // Update the visibility at start
     }
 
     private void Update()
     {
-        UpdateItemVisibility();
         HandleItemUsage();
+    }
+
+    private void UpdateItemProperties(ItemSO item, Image icon, TMP_Text text)
+    {
+        // Set the icon and description from ItemSO
+        if (item != null)
+        {
+            icon.sprite = item.icon; // Set the item icon
+            text.text = item.itemname; // Set the item name for the text UI
+        }
     }
 
     private void UpdateItemVisibility()
     {
+        HideAllItems(); // Hide all items before updating visibility
+
         foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
-            if (item.id >= 4 && item.id <= 6)
+            if (item.id == armorItem.id) // Armor
             {
-                if (item == skeletonKeyItem)
-                {
-                    skeletonKeyIcon.gameObject.SetActive(true);
-                    skeletonText.gameObject.SetActive(true);
-                    skeletonText.text = GetItemCount(skeletonKeyItem).ToString();
-                }
-                else if (item == mpPotionItem)
-                {
-                    mpPotionIcon.gameObject.SetActive(true);
-                    mpPotionText.gameObject.SetActive(true);
-                    mpPotionText.text = GetItemCount(mpPotionItem).ToString();
-                }
-                else if (item == hpPotionItem)
-                {
-                    hpPotionIcon.gameObject.SetActive(true);
-                    hpPotionText.gameObject.SetActive(true);
-                    hpPotionText.text = GetItemCount(hpPotionItem).ToString();
-                }
+                armorIcon.gameObject.SetActive(true);
+                armorText.gameObject.SetActive(true);
+                armorText.text = GetItemCount(armorItem).ToString();
+            }
+            else if (item.id == damageItem.id) // Damage
+            {
+                damageIcon.gameObject.SetActive(true);
+                damageText.gameObject.SetActive(true);
+                damageText.text = GetItemCount(damageItem).ToString();
+            }
+            else if (item.id == teddyBearItem.id) // Teddy Bear
+            {
+                teddyBearIcon.gameObject.SetActive(true);
+                teddyBearText.gameObject.SetActive(true);
+                teddyBearText.text = GetItemCount(teddyBearItem).ToString();
             }
         }
     }
-
 
     private int GetItemCount(ItemSO item)
     {
@@ -86,74 +105,73 @@ public class InventoryUI : MonoBehaviour
 
     private void HideAllItems()
     {
-        skeletonKeyIcon.gameObject.SetActive(false);
-        mpPotionIcon.gameObject.SetActive(false);
-        hpPotionIcon.gameObject.SetActive(false);
-        
-        skeletonText.gameObject.SetActive(false);
-        mpPotionText.gameObject.SetActive(false);
-        hpPotionText.gameObject.SetActive(false);
+        armorIcon.gameObject.SetActive(false);
+        damageIcon.gameObject.SetActive(false);
+        teddyBearIcon.gameObject.SetActive(false);
+
+        armorText.gameObject.SetActive(false);
+        damageText.gameObject.SetActive(false);
+        teddyBearText.gameObject.SetActive(false);
     }
 
     private void HandleItemUsage()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            UseHpPotion();
+            UseTeddyBear(); // Changed method call to UseTeddyBear
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2)) 
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            UseMpPotion();
+            UseDamageItem(); // Changed method call to UseDamageItem
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3)) 
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            UseSkeletonKey();
-        }
-    }
-
-    private void UseHpPotion()
-    {
-        if (InventoryManager.Instance.HasItem(hpPotionItem))
-        {
-            player.Heal(healValue); 
-            InventoryManager.Instance.RemoveItem(hpPotionItem);
-            UpdateItemVisibility(); 
-            Debug.Log($"{hpPotionItem.name} has been used.");
-        }
-        else
-        {
-            Debug.Log($"No {hpPotionItem.name} available to use.");
+            UseArmor(); // Changed method call to UseArmor
         }
     }
 
-    private void UseMpPotion()
+    private void UseTeddyBear()
     {
-        if (InventoryManager.Instance.HasItem(mpPotionItem))
+        if (InventoryManager.Instance.HasItem(teddyBearItem))
         {
-            playerStat.walkSpeed = playerStat.walkSpeed +2 ;
-            playerStat.sprintSpeed = playerStat.sprintSpeed + 2;
-            InventoryManager.Instance.RemoveItem(mpPotionItem);
-            UpdateItemVisibility(); 
-            Debug.Log($"{mpPotionItem.name} has been used.");
+            player.Heal(teddyBearItem.propertyList[0].value); // Heal value from ItemSO
+            InventoryManager.Instance.RemoveItem(teddyBearItem);
+            UpdateItemVisibility();
+            Debug.Log($"{teddyBearItem.name} has been used.");
         }
         else
         {
-            Debug.Log($"No {mpPotionItem.name} available to use.");
+            Debug.Log($"No {teddyBearItem.name} available to use.");
         }
     }
 
-    private void UseSkeletonKey()
+    private void UseDamageItem()
     {
-        if (InventoryManager.Instance.HasItem(skeletonKeyItem))
+        if (InventoryManager.Instance.HasItem(damageItem))
         {
-            player.TakeDamage(takeDamagelValue); 
-            InventoryManager.Instance.RemoveItem(skeletonKeyItem);
-            UpdateItemVisibility(); 
-            Debug.Log($"{skeletonKeyItem.name} has been used.");
+            playerStat.attackDamage += 5; // Adjust the damage value here
+            InventoryManager.Instance.RemoveItem(damageItem);
+            UpdateItemVisibility();
+            Debug.Log($"{damageItem.name} has been used.");
         }
         else
         {
-            Debug.Log($"No {skeletonKeyItem.name} available to use.");
+            Debug.Log($"No {damageItem.name} available to use.");
+        }
+    }
+
+    private void UseArmor()
+    {
+        if (InventoryManager.Instance.HasItem(armorItem))
+        {
+            player.TakeDamage(-10); // Modify this logic to suit how you want to use armor
+            InventoryManager.Instance.RemoveItem(armorItem);
+            UpdateItemVisibility();
+            Debug.Log($"{armorItem.name} has been used.");
+        }
+        else
+        {
+            Debug.Log($"No {armorItem.name} available to use.");
         }
     }
 
