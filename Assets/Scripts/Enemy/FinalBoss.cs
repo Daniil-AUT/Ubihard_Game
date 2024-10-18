@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public class FinalBoss : MonoBehaviour
 {
     public int HP = 100;
     public int currencyReward = 20;
-    public int expReward = 50; // Experience points to reward when defeated
 
     public float detectionRange = 20.0f;
 
@@ -26,11 +25,17 @@ public class Enemy : MonoBehaviour
     private EnemyState childState = EnemyState.RestingState;
     public float restTime = 2;
     private float restTimer = 0;
+    public ItemSO itemToDrop;
 
     public float attackDistance = 1.5f; // Distance to trigger attack
     public float attackDamage = 10f;     // Amount of damage dealt to the player
     private float attackCooldown = 1f;    // Cooldown between attacks
     private float attackTimer = 0f;       // Timer to track cooldown
+
+    // Controller fields
+    private Animator controllerAnimator;
+    public bool IsRunning;
+    public bool IsAttacking;
 
     void Start()
     {
@@ -38,50 +43,83 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         anim = GetComponent<Animator>();
         playerTargetLock = FindObjectOfType<PlayerTargetLock>();
+        controllerAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-        if (distanceToPlayer <= detectionRange)
-        {
-            enemyAgent.SetDestination(player.transform.position);
-            if (distanceToPlayer <= attackDistance)
-            {
-                AttackPlayer();
-            }
-        }
-
-        // State logic
-        if (currentState == EnemyState.NormalState)
-        {
-            if (childState == EnemyState.RestingState)
-            {
-                restTimer += Time.deltaTime;
-
-                if (restTimer > restTime)
-                {
-                    Vector3 randomPosition = FindRandomPosition();
-                    enemyAgent.SetDestination(randomPosition);
-                    childState = EnemyState.MovingState;
-                }
-            }
-            else if (childState == EnemyState.MovingState)
-            {
-                if (enemyAgent.remainingDistance <= 0)
-                {
-                    restTime = 0;
-                    childState = EnemyState.RestingState;
-                }
-            }
-        }
+        // Handle Movement and Attacking
+        HandleMovement(distanceToPlayer);
+        HandleAttack(distanceToPlayer);
 
         // Example damage trigger for testing
         if (Input.GetKeyDown(KeyCode.Z))
         {
             TakeDamage(30);
         }
+    }
+
+    void HandleMovement(float distanceToPlayer)
+    {
+        if (distanceToPlayer <= detectionRange)
+        {
+            enemyAgent.SetDestination(player.transform.position);
+
+            // Check if the boss is moving
+            if (enemyAgent.velocity.sqrMagnitude > 0.01f)
+            {
+                IsRunning = true;
+            }
+            else
+            {
+                IsRunning = false;
+            }
+
+            controllerAnimator.SetBool("IsRunning", IsRunning);
+
+            // Manage resting and moving states
+            if (currentState == EnemyState.NormalState)
+            {
+                if (childState == EnemyState.RestingState)
+                {
+                    restTimer += Time.deltaTime;
+
+                    if (restTimer > restTime)
+                    {
+                        Vector3 randomPosition = FindRandomPosition();
+                        enemyAgent.SetDestination(randomPosition);
+                        childState = EnemyState.MovingState;
+                    }
+                }
+                else if (childState == EnemyState.MovingState)
+                {
+                    if (enemyAgent.remainingDistance <= 0)
+                    {
+                        restTime = 0;
+                        childState = EnemyState.RestingState;
+                    }
+                }
+            }
+        }
+    }
+
+    void HandleAttack(float distanceToPlayer)
+    {
+        if (distanceToPlayer <= attackDistance)
+        {
+            IsAttacking = true;
+            IsRunning = false;
+            controllerAnimator.SetBool("IsAttacking", IsAttacking);
+            AttackPlayer();
+        }
+        else
+        {
+            IsAttacking = false;
+        }
+
+        controllerAnimator.SetBool("IsAttacking", IsAttacking);
     }
 
     void AttackPlayer()
@@ -93,10 +131,10 @@ public class Enemy : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage(attackDamage); 
+                playerStats.TakeDamage(attackDamage); // Player takes damage
             }
-            attackTimer = 0f; 
-            anim.SetTrigger("Attack"); 
+            attackTimer = 0f; // Reset the attack timer
+            anim.SetTrigger("Attack"); // Trigger attack animation if available
         }
     }
 
@@ -116,12 +154,11 @@ public class Enemy : MonoBehaviour
         {
             GetComponent<Collider>().enabled = false;
 
-            // Give currency and experience to player when enemy dies
+            // Give currency to player when enemy dies
             Player playerStats = FindObjectOfType<Player>();
             if (playerStats != null)
             {
                 playerStats.AddCurrency(currencyReward);
-                playerStats.GetComponent<PlayerXP>().AddEXP(expReward); 
             }
 
             DropLoot();
@@ -137,38 +174,15 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    virtual protected void DropLoot()
+    protected virtual void DropLoot()
     {
-        int count = Random.Range(1, 6);
-        for (int i = 0; i < count; i++)
+        if (itemToDrop != null && itemToDrop.prefab != null)
         {
-            ItemSO item = null;
+            GameObject go = Instantiate(itemToDrop.prefab, transform.position, Quaternion.identity);
+            go.tag = "Interactable";
 
-            do
-            {
-                item = ItemDBManager.Instance.GetRandomItem();
-            }
-            while (item != null && item.id == 6);
-
-            if (item != null && item.prefab != null)
-            {
-                GameObject go = Instantiate(item.prefab, transform.position, Quaternion.identity);
-                go.tag = "Interactable";
-
-                PickableObject po = go.AddComponent<PickableObject>();
-                po.itemSO = item;
-            }
-        }
-
-        Player playerStats = FindObjectOfType<Player>();
-        if (playerStats != null)
-        {
-            PlayerXP playerXP = playerStats.GetComponent<PlayerXP>();
-            if (playerXP != null)
-            {
-                playerXP.AddEXP(expReward); 
-            }
+            PickableObject po = go.AddComponent<PickableObject>();
+            po.itemSO = itemToDrop;
         }
     }
-
 }

@@ -35,7 +35,6 @@ public class QuestPanelSystem : MonoBehaviour
 
     private void Start()
     {
-        // Ensure the panel is hidden at the strat
         gameObject.SetActive(false);
 
         if (canvasGroup != null)
@@ -52,10 +51,8 @@ public class QuestPanelSystem : MonoBehaviour
         currentQuest = quest; 
         UpdateQuestDisplay();
 
-        // Activate the quest panel before starting the coroutine
         gameObject.SetActive(true); 
 
-        // Start the fade-in process
         StartCoroutine(FadeInQuestPanel());
     }
 
@@ -63,7 +60,7 @@ public class QuestPanelSystem : MonoBehaviour
     // Coroutine to fade in the quest panel
     private IEnumerator FadeInQuestPanel()
     {
-        gameObject.SetActive(true); // Show the quest panel
+        gameObject.SetActive(true); 
         if (canvasGroup != null)
         {
             // Gradually increase the alpha value to create a fade-in effect
@@ -86,8 +83,8 @@ public class QuestPanelSystem : MonoBehaviour
         if (currentQuest != null)
         {
             currentQuest.isCompleted = true;
-            HideQuestPanel(); // Hide the panel when quest is completed
-            DialogueUI.Instance.CompleteQuest(); // Notify Dialogue UI of quest completion
+            HideQuestPanel(); 
+            DialogueUI.Instance.CompleteQuest(); 
         }
     }
 
@@ -96,11 +93,11 @@ public class QuestPanelSystem : MonoBehaviour
     {
         if (canvasGroup != null)
         {
-            canvasGroup.alpha = 0; // Reset alpha to transparent
-            canvasGroup.interactable = false; // Disable interactions
-            canvasGroup.blocksRaycasts = false; // Prevent raycasts
+            canvasGroup.alpha = 0; 
+            canvasGroup.interactable = false; 
+            canvasGroup.blocksRaycasts = false;
         }
-        gameObject.SetActive(false); // Hide the quest panel
+        gameObject.SetActive(false); 
     }
 
     // Method to update the quest display text

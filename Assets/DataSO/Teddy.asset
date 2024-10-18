@@ -17,7 +17,7 @@ MonoBehaviour:
   itemType: 0
   description: The best sword in the village!
   propertyList:
-  - propertytype: 4
+  - propertytype: 6
     value: 30
   icon: {fileID: 21300000, guid: 4e09871893952a64fbf3f49cd752307b, type: 3}
-  prefab: {fileID: 2788726836488354371, guid: adaf965d4c9d35241a65ac4753a393bd, type: 3}
+  prefab: {fileID: 6148530827698563665, guid: 1acbf3a40392fe947b5d0fea3cb9dfae, type: 3}

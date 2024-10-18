@@ -4,29 +4,32 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
-    public static InventoryUI Instance { get; private set; } // Singleton instance
+    public static InventoryUI Instance { get; private set; }
 
-    // Update variable names to reflect new items
-    public Image armorIcon;        // Changed from skeletonKeyIcon to armorIcon
-    public Image damageIcon;       // Changed from mpPotionIcon to damageIcon
-    public Image teddyBearIcon;    // Changed from hpPotionIcon to teddyBearIcon
+    private PlayerStatsDisplay playerStatsDisplay;
 
-    public TMP_Text armorText;     // Changed from skeletonText to armorText
-    public TMP_Text damageText;     // Changed from mpPotionText to damageText
-    public TMP_Text teddyBearText;  // Changed from hpPotionText to teddyBearText
+    // Variables for item icons and texts
+    public Image armorIcon;
+    public Image damageIcon;
+    public Image teddyBearIcon;
 
-    public PlayerController playerStat;
+    public TMP_Text armorText;
+    public TMP_Text damageText;
+    public TMP_Text teddyBearText;
 
-    // Updated item references to match new item types
-    [SerializeField] private ItemSO armorItem;         // Changed from skeletonKeyItem to armorItem
-    [SerializeField] private ItemSO damageItem;        // Changed from mpPotionItem to damageItem
-    [SerializeField] private ItemSO teddyBearItem;     // Changed from hpPotionItem to teddyBearItem
+    public Player playerStat;
+
+    [SerializeField] public ItemSO armorItem; // Changed to public
+    [SerializeField] public ItemSO damageItem; // Changed to public
+    [SerializeField] public ItemSO teddyBearItem;
 
     private Player player;
 
+    // Reference to the Gift Confirmation Panel
+    public GiftConfirmationPanel giftConfirmationPanel;
+
     private void Awake()
     {
-        // Implement the Singleton pattern
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -38,14 +41,13 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         player = FindObjectOfType<Player>();
+        playerStatsDisplay = FindObjectOfType<PlayerStatsDisplay>();
 
-        // Set initial item properties
-        UpdateItemProperties(armorItem, armorIcon, armorText);
-        UpdateItemProperties(damageItem, damageIcon, damageText);
-        UpdateItemProperties(teddyBearItem, teddyBearIcon, teddyBearText);
+        // Update the UI with item properties (icons, texts)
+        RefreshUI();
 
         HideAllItems();
-        UpdateItemVisibility(); // Update the visibility at start
+        UpdateItemVisibility();
     }
 
     private void Update()
@@ -55,52 +57,8 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateItemProperties(ItemSO item, Image icon, TMP_Text text)
     {
-        // Set the icon and description from ItemSO
-        if (item != null)
-        {
-            icon.sprite = item.icon; // Set the item icon
-            text.text = item.itemname; // Set the item name for the text UI
-        }
-    }
-
-    private void UpdateItemVisibility()
-    {
-        HideAllItems(); // Hide all items before updating visibility
-
-        foreach (ItemSO item in InventoryManager.Instance.itemList)
-        {
-            if (item.id == armorItem.id) // Armor
-            {
-                armorIcon.gameObject.SetActive(true);
-                armorText.gameObject.SetActive(true);
-                armorText.text = GetItemCount(armorItem).ToString();
-            }
-            else if (item.id == damageItem.id) // Damage
-            {
-                damageIcon.gameObject.SetActive(true);
-                damageText.gameObject.SetActive(true);
-                damageText.text = GetItemCount(damageItem).ToString();
-            }
-            else if (item.id == teddyBearItem.id) // Teddy Bear
-            {
-                teddyBearIcon.gameObject.SetActive(true);
-                teddyBearText.gameObject.SetActive(true);
-                teddyBearText.text = GetItemCount(teddyBearItem).ToString();
-            }
-        }
-    }
-
-    private int GetItemCount(ItemSO item)
-    {
-        int count = 0;
-        foreach (ItemSO inventoryItem in InventoryManager.Instance.itemList)
-        {
-            if (inventoryItem == item)
-            {
-                count++;
-            }
-        }
-        return count;
+        icon.sprite = item.icon;
+        text.text = GetItemCount(item).ToString();
     }
 
     private void HideAllItems()
@@ -114,33 +72,74 @@ public class InventoryUI : MonoBehaviour
         teddyBearText.gameObject.SetActive(false);
     }
 
+    private void UpdateItemVisibility()
+    {
+        armorIcon.gameObject.SetActive(InventoryManager.Instance.HasItem(armorItem));
+        damageIcon.gameObject.SetActive(InventoryManager.Instance.HasItem(damageItem));
+        teddyBearIcon.gameObject.SetActive(InventoryManager.Instance.HasItem(teddyBearItem));
+
+        armorText.gameObject.SetActive(InventoryManager.Instance.HasItem(armorItem));
+        damageText.gameObject.SetActive(InventoryManager.Instance.HasItem(damageItem));
+        teddyBearText.gameObject.SetActive(InventoryManager.Instance.HasItem(teddyBearItem));
+    }
+
     private void HandleItemUsage()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            UseTeddyBear(); // Changed method call to UseTeddyBear
+            UseTeddyBear();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            UseDamageItem(); // Changed method call to UseDamageItem
+            UseDamageItem();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            UseArmor(); // Changed method call to UseArmor
+            UseArmor();
         }
     }
 
-    private void UseTeddyBear()
+    public void UseTeddyBear()
     {
+        // Get the reference to the NPCObject
+        NPCObject currentNPC = FindObjectOfType<NPCObject>();
+
+        // Check if the dialogue has finished and the player is in range
+        if (currentNPC != null && !currentNPC.IsPlayerInRange())
+        {
+            Debug.Log("Player must be in range to use the teddy bear.");
+            return;
+        }
+
+        if (!DialogueUI.isDialogueFinished)
+        {
+            Debug.Log("Dialogue must finish before using the teddy bear.");
+            return;
+        }
+
+        // Check if the player has the teddy bear item
         if (InventoryManager.Instance.HasItem(teddyBearItem))
         {
-            player.Heal(teddyBearItem.propertyList[0].value); // Heal value from ItemSO
+            playerStat.currentHealth += 20;
             InventoryManager.Instance.RemoveItem(teddyBearItem);
-            UpdateItemVisibility();
+            RefreshUI();
+
             Debug.Log($"{teddyBearItem.name} has been used.");
+
+            // Show the gift confirmation panel
+            if (giftConfirmationPanel != null)
+            {
+                giftConfirmationPanel.ShowPanel();
+            }
         }
         else
         {
+            // Show notification panel to inform the user they need to give the teddy bear
+            NotificationPanel notificationPanel = FindObjectOfType<NotificationPanel>();
+            if (notificationPanel != null)
+            {
+                notificationPanel.ShowNotification("You need to give the teddy bear!", 2f);
+            }
             Debug.Log($"No {teddyBearItem.name} available to use.");
         }
     }
@@ -149,9 +148,13 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(damageItem))
         {
-            playerStat.attackDamage += 5; // Adjust the damage value here
+            playerStat.attackDamage += 5;
             InventoryManager.Instance.RemoveItem(damageItem);
-            UpdateItemVisibility();
+            RefreshUI();
+
+            // Update the attack damage in the UI
+            playerStatsDisplay.UpdateAttackDamage(playerStat.attackDamage);
+
             Debug.Log($"{damageItem.name} has been used.");
         }
         else
@@ -160,13 +163,23 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void RefreshUI()
+    {
+        UpdateItemProperties(armorItem, armorIcon, armorText);
+        UpdateItemProperties(damageItem, damageIcon, damageText);
+        UpdateItemProperties(teddyBearItem, teddyBearIcon, teddyBearText);
+
+        UpdateItemVisibility();
+    }
+
     private void UseArmor()
     {
         if (InventoryManager.Instance.HasItem(armorItem))
         {
-            player.TakeDamage(-10); // Modify this logic to suit how you want to use armor
+            playerStat.defense += 1;
             InventoryManager.Instance.RemoveItem(armorItem);
-            UpdateItemVisibility();
+            RefreshUI();
+            playerStatsDisplay.UpdateDefense(playerStat.defense);
             Debug.Log($"{armorItem.name} has been used.");
         }
         else
@@ -175,9 +188,9 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // Add this method to update the UI when loading a game
-    public void RefreshUI()
+    // Method to get the count of a specific item in the inventory
+    private int GetItemCount(ItemSO item)
     {
-        UpdateItemVisibility();
+        return InventoryManager.Instance.GetItemCount(item);
     }
 }
