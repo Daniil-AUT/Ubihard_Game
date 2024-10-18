@@ -22,11 +22,38 @@ public class PlayerPropertyUI : MonoBehaviour
     {
         propertyGrid = transform.Find("UI/Grid").gameObject;
         propertyTemplate = transform.Find("UI/Grid/PropertyTemplate").gameObject;
+
+        propertyTemplate.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void UpdatePlayerPropertyUI(Player pp)
+    {
+        ClearGrid();
+
+    }
+
+    private void ClearGrid()
+    {
+        foreach (Transform child in propertyGrid.transform)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
+    private void AddProperty(string PropertyStr)
+    { 
+        GameObject go = GameObject.Instantiate(propertyTemplate);
+        go.SetActive(true);
+        go.transform.SetParent(propertyGrid.transform);
+        go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = PropertyStr;
     }
 }
