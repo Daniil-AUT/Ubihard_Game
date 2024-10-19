@@ -65,9 +65,15 @@ public class InventoryManager : MonoBehaviour
         {
             BagUI.Instance.AddItemToBag(item); 
         }
+        else if (item.id >= 8)
+        {
+            BagUI.Instance.AddItemToBag(item);
+        }
         else if (item.id >= 4 && item.id <= 6)
         {
             Debug.Log($"Item ID {item.id} is reserved for InventoryUI.");
+            // Refresh UI to display the newly added item
+            InventoryUI.Instance.RefreshUI();
         }
         else
         {
@@ -75,9 +81,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"Item {item.name} added to inventory.");
-
-        // Refresh UI to display the newly added item
-        InventoryUI.Instance.RefreshUI(); 
+        
     }
 
     public void RemoveItem(ItemSO item)

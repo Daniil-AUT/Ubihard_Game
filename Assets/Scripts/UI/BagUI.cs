@@ -172,7 +172,7 @@ public class BagUI : MonoBehaviour
     }
     public void AddItemToBag(ItemSO itemSO)
     {
-        if (itemSO != null && itemSO.id >= 1 && itemSO.id <= 3)
+        if (itemSO)
         {
             inventory.Add(itemSO);
             GameObject itemGo = GameObject.Instantiate(itemPrefab);
