@@ -3,11 +3,12 @@ using UnityEngine.AI;
 
 public class FinalBoss : MonoBehaviour
 {
-    public int HP = 100;
-    public int currencyReward = 20;
+    public int HP = 400;
+    public int currencyReward = 300;
+    public int expReward = 400; 
 
-    public float detectionRange = 20.0f;
-
+    public float detectionRange = 50.0f;
+    public ItemSO itemToDrop;
     private GameObject player;
     private Animator anim;
     private PlayerTargetLock playerTargetLock;
@@ -25,17 +26,11 @@ public class FinalBoss : MonoBehaviour
     private EnemyState childState = EnemyState.RestingState;
     public float restTime = 2;
     private float restTimer = 0;
-    public ItemSO itemToDrop;
 
-    public float attackDistance = 1.5f; // Distance to trigger attack
-    public float attackDamage = 10f;     // Amount of damage dealt to the player
-    private float attackCooldown = 1f;    // Cooldown between attacks
+    public float attackDistance = 2f; // Distance to trigger attack
+    public float attackDamage = 20f;     // Amount of damage dealt to the player
+    private float attackCooldown = 2f;    // Cooldown between attacks
     private float attackTimer = 0f;       // Timer to track cooldown
-
-    // Controller fields
-    private Animator controllerAnimator;
-    public bool IsRunning;
-    public bool IsAttacking;
 
     void Start()
     {
@@ -43,83 +38,50 @@ public class FinalBoss : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         anim = GetComponent<Animator>();
         playerTargetLock = FindObjectOfType<PlayerTargetLock>();
-        controllerAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-        // Handle Movement and Attacking
-        HandleMovement(distanceToPlayer);
-        HandleAttack(distanceToPlayer);
+        if (distanceToPlayer <= detectionRange)
+        {
+            enemyAgent.SetDestination(player.transform.position);
+            if (distanceToPlayer <= attackDistance)
+            {
+                AttackPlayer();
+            }
+        }
+
+        // State logic
+        if (currentState == EnemyState.NormalState)
+        {
+            if (childState == EnemyState.RestingState)
+            {
+                restTimer += Time.deltaTime;
+
+                if (restTimer > restTime)
+                {
+                    Vector3 randomPosition = FindRandomPosition();
+                    enemyAgent.SetDestination(randomPosition);
+                    childState = EnemyState.MovingState;
+                }
+            }
+            else if (childState == EnemyState.MovingState)
+            {
+                if (enemyAgent.remainingDistance <= 0)
+                {
+                    restTime = 0;
+                    childState = EnemyState.RestingState;
+                }
+            }
+        }
 
         // Example damage trigger for testing
         if (Input.GetKeyDown(KeyCode.Z))
         {
             TakeDamage(30);
         }
-    }
-
-    void HandleMovement(float distanceToPlayer)
-    {
-        if (distanceToPlayer <= detectionRange)
-        {
-            enemyAgent.SetDestination(player.transform.position);
-
-            // Check if the boss is moving
-            if (enemyAgent.velocity.sqrMagnitude > 0.01f)
-            {
-                IsRunning = true;
-            }
-            else
-            {
-                IsRunning = false;
-            }
-
-            controllerAnimator.SetBool("IsRunning", IsRunning);
-
-            // Manage resting and moving states
-            if (currentState == EnemyState.NormalState)
-            {
-                if (childState == EnemyState.RestingState)
-                {
-                    restTimer += Time.deltaTime;
-
-                    if (restTimer > restTime)
-                    {
-                        Vector3 randomPosition = FindRandomPosition();
-                        enemyAgent.SetDestination(randomPosition);
-                        childState = EnemyState.MovingState;
-                    }
-                }
-                else if (childState == EnemyState.MovingState)
-                {
-                    if (enemyAgent.remainingDistance <= 0)
-                    {
-                        restTime = 0;
-                        childState = EnemyState.RestingState;
-                    }
-                }
-            }
-        }
-    }
-
-    void HandleAttack(float distanceToPlayer)
-    {
-        if (distanceToPlayer <= attackDistance)
-        {
-            IsAttacking = true;
-            IsRunning = false;
-            controllerAnimator.SetBool("IsAttacking", IsAttacking);
-            AttackPlayer();
-        }
-        else
-        {
-            IsAttacking = false;
-        }
-
-        controllerAnimator.SetBool("IsAttacking", IsAttacking);
     }
 
     void AttackPlayer()
@@ -131,10 +93,10 @@ public class FinalBoss : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage(attackDamage); // Player takes damage
+                playerStats.TakeDamage(attackDamage);
             }
-            attackTimer = 0f; // Reset the attack timer
-            anim.SetTrigger("Attack"); // Trigger attack animation if available
+            attackTimer = 0f;
+            anim.SetTrigger("Attack");
         }
     }
 
@@ -154,11 +116,12 @@ public class FinalBoss : MonoBehaviour
         {
             GetComponent<Collider>().enabled = false;
 
-            // Give currency to player when enemy dies
+            // Give currency and experience to player when enemy dies
             Player playerStats = FindObjectOfType<Player>();
             if (playerStats != null)
             {
                 playerStats.AddCurrency(currencyReward);
+                playerStats.GetComponent<PlayerXP>().AddEXP(expReward);
             }
 
             DropLoot();
@@ -185,4 +148,12 @@ public class FinalBoss : MonoBehaviour
             po.itemSO = itemToDrop;
         }
     }
+
 }
+
+
+
+
+
+
+
