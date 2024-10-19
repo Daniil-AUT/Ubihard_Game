@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    private Vector3 deathPosition;
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
     public bool isInCombat = false;
     float jumpTime;
     public float jumpDuration = 1f;
-
+    private bool isSpeedBoosted = false; 
     private Player playerScript;
     private bool isDead = false;
 
@@ -168,6 +169,30 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Apply speed boost
+    public void ApplySpeedBoost(float amount)
+    {
+        if (isSpeedBoosted) return; // Prevent stacking
+
+        isSpeedBoosted = true; // Set flag
+        walkSpeed += amount;
+        sprintSpeed += amount;
+        currentSpeed = walkSpeed; // Reset current speed to walk speed
+        Debug.Log($"Speed increased by {amount}. New walk speed: {walkSpeed}, New sprint speed: {sprintSpeed}");
+
+        // Reset speed after duration (optional)
+        StartCoroutine(ResetSpeedAfterDuration(5f)); 
+    }
+
+    private IEnumerator ResetSpeedAfterDuration(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        walkSpeed -= 5; 
+        sprintSpeed -= 5;
+        isSpeedBoosted = false; 
+        Debug.Log($"Speed reset. Walk speed: {walkSpeed}, Sprint speed: {sprintSpeed}");
+    }
+
     private IEnumerator StopDodging()
     {
         yield return new WaitForSeconds(0.5f);
@@ -196,17 +221,8 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
 
-        // Disable CharacterController to prevent further movement
-        controller.enabled = false;
-
         // Zero out velocity and stop any movement
         velocity = Vector3.zero;
-
-        // Play the death animation
-        if (anim != null)
-        {
-            anim.SetTrigger("Die");
-        }
 
     }
 
