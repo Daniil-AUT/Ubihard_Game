@@ -1,6 +1,6 @@
 # Elden Sword - Team UbiHard
 
-**Elden Sword** is a 3D open-world RPG game where your goal is to defeat Minotaur to retrieve a Teddy Bear and bring him back to the village. You will Engage in immersive combat, explore wilderness environments, and interact with NPCs to discover hidden quests and treasures. Develop your character’s abilities, use strategic gameplay, and conquer enemies in this dynamic RPG.
+**Elden Sword** is a 3D open-world RPG game where your goal is to defeat Minotaur to get a Teddy Bear and bring him back to the village. You will Engage in immersive combat, explore wilderness environments, and interact with NPCs to discover hidden quests and treasures. Develop your character’s abilities, use strategic gameplay, and conquer enemies in this dynamic RPG.
 
 ![Elden Sword Logo](path/to/logo-image.png)
 
@@ -15,6 +15,10 @@
 - [License](#license)
 
 ---
+
+# Team UbiHard
+
+We’re a team of four who worked together to develop a game using the Scrum framework. Our Scrum Master ensured that best practices were followed and helped us overcome any challenges we faced during development. The Product Owner communicated their vision and goals for the game, ensuring that we all had a clear understanding of the direction we were heading. Meanwhile, the Development Team focused on coding features that aligned with the Product Owner’s expectations, bringing the vision to life through our work.
 
 ## About the Game
 
