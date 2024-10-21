@@ -10,6 +10,9 @@ public class ShopkeeperUI : MonoBehaviour
     
     public GameObject ShopUI;
     public GameObject BuyMenuUI;
+    public GameObject SellMenuUI;
+    public SellMenu sellMenu; // Reference to the SellMenu script
+
 
     public Button buyButton;
     public Button sellButton;
@@ -32,6 +35,7 @@ public class ShopkeeperUI : MonoBehaviour
         sellButton.onClick.AddListener(OnSellButtonClick);
         leaveButton.onClick.AddListener(OnLeaveButtonClick);
         BuyMenuUI.SetActive(false);
+        SellMenuUI.SetActive(false);
         Hide();
     }
 
@@ -56,6 +60,7 @@ public class ShopkeeperUI : MonoBehaviour
     {
         // buying items from the shop
         BuyMenuUI.SetActive(true);
+        SellMenuUI.SetActive(false);
         Debug.Log("Buy clicked");
 
         // Add item purchasing logic here...
@@ -65,8 +70,18 @@ public class ShopkeeperUI : MonoBehaviour
     private void OnSellButtonClick()
     {
         //handle selling items to the shop
+        SellMenuUI.SetActive(true);
+        BuyMenuUI.SetActive(false);
         Debug.Log("Sell clicked");
         // Add item selling logic here...
+        if (sellMenu != null)
+        {
+            sellMenu.UpdateSellMenu(); // Update to show the player's inventory
+        }
+        else
+        {
+            Debug.LogWarning("SellMenu reference is not assigned.");
+        }
     }
 
     //;leave button click
@@ -74,5 +89,12 @@ public class ShopkeeperUI : MonoBehaviour
     {
         Hide(); //close the shop UI
         Debug.Log("Leave clicked");
+    }
+    
+
+
+    public void UpdateSellMenu()
+    {
+        sellMenu.GetComponent<SellMenu>().UpdateSellMenu();
     }
 }

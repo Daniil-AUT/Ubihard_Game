@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -156,5 +157,10 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"Loaded {itemDictionary.Count} items into inventory.");
+    }
+
+    public List<ItemSO> GetAllItems()
+    {
+        return itemDictionary.Keys.ToList(); //returns list of all items
     }
 }
