@@ -5,16 +5,49 @@ public class Player : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
-    public float movementSpeed = 5f; // Add this for movement speed
+    public int movementSpeed = 5;
+    public int attackDamage = 20;
+    public int defense = 1;
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;
     public int currentCurrency = 0;
+    public GameOverManager gameOverManager;
+    public PlayerController playerController;
+    private Animator animator;
+    private bool isDead = false;
+    private Vector3 deathPosition;
+    private CharacterController characterController;
+
+    public int level = 1;
+    public int currentEXP = 0;
+    public int expToNextLevel = 100; 
+    public int expReward = 50; 
+
+
+
 
     private void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+
+        if (playerController == null)
+        {
+            playerController = GetComponent<PlayerController>();
+        }
+
+        animator = GetComponentInChildren<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator component not found on this GameObject or its children.");
+        }
+
+        characterController = GetComponent<CharacterController>();
+        if (characterController == null)
+        {
+            Debug.LogError("CharacterController component not found on this GameObject.");
+        }
     }
 
     private void Update()
@@ -37,20 +70,79 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void TeleportPlayer(Vector3 newPosition)
-    {
-        transform.position = newPosition;
-        Debug.Log("THIS FUNCTION WORKED!!!" + newPosition);
-    }
-
     public void TakeDamage(float damage)
     {
-        if (!isInvincible)
+        if (!isInvincible && !isDead)
         {
-            currentHealth -= damage;
+            currentHealth -= (damage- defense);
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
+            Debug.Log($"Player took damage: {damage}. Current health: {currentHealth}");
+
+            if (currentHealth <= 0 && !isDead)
+            {
+                Die();
+            }
         }
+    }
+
+    private void Die()
+    {
+        isDead = true;
+        deathPosition = transform.position; 
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+        StartCoroutine(ShowGameOverScreen());
+    }
+
+    private void LateUpdate()
+    {
+        if (isDead)
+        {
+            transform.position = deathPosition;
+        }
+    }
+
+    private IEnumerator ShowGameOverScreen()
+    {
+        if (animator != null)
+        {
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+        }
+
+        if (gameOverManager != null)
+        {
+            gameOverManager.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameOverManager not assigned to Player script.");
+        }
+    }
+
+    public void ResetPlayer()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        healthBar.SetHealth(currentHealth);
+        transform.position = new Vector3(70.1f, 23f, 37.37f); 
+        
+        playerController.enabled = true; 
+
+        
+        if (animator != null)
+        {
+            animator.Rebind(); 
+            animator.Update(0f);
+        }
+        playerController.ResetController();
     }
 
     public void Heal(float amount)
@@ -100,22 +192,21 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Method to apply effects based on the item
     public void ApplyItemEffect(ItemSO item)
     {
         switch (item.id)
         {
             case 1: // Heal effect
-                Heal(20f); // Example healing amount
+                Heal(20f); 
                 break;
 
             case 2: // Speed increase
-                StartCoroutine(IncreaseSpeed(5f, 10f)); // Increase by 5 for 10 seconds
+                StartCoroutine(IncreaseSpeed(5f, 10f)); 
                 break;
 
             case 3: // Damage reduction effect
                 TakeDamage(20f);
-                Debug.Log("Damage has been reduced."); // Replace this with your damage reduction logic
+                Debug.Log("Damage has been reduced.");
                 break;
 
             default:
@@ -126,10 +217,38 @@ public class Player : MonoBehaviour
 
     private IEnumerator IncreaseSpeed(float amount, float duration)
     {
-        movementSpeed += amount;
+        // Cast the float amount to int when modifying the movementSpeed
+        movementSpeed += (int)amount;
         Debug.Log($"Movement speed increased to: {movementSpeed}");
+
         yield return new WaitForSeconds(duration);
-        movementSpeed -= amount;
+
+        // Revert the movement speed after duration
+        movementSpeed -= (int)amount;
         Debug.Log($"Movement speed reverted to: {movementSpeed}");
     }
+
+
+    // New method to set player position (used when loading game)
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = newPosition;
+        playerPosition = newPosition;
+        if (playerController != null)
+        {
+            playerController.ResetController();
+        }
+    }
+
+    public void TeleportToPosition(Vector3 newPosition)
+{
+    transform.position = newPosition; 
+    playerPosition = newPosition; 
+    if (playerController != null)
+    {
+        playerController.ResetController(); 
+    }
+}
+
+
 }

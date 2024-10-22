@@ -40,25 +40,25 @@ public class ItemDetailUI : MonoBehaviour
         }
 
         // When certain ItemSO is picked, assign it the properties based on type
-        foreach (ItemProperty property in itemSO.propertyList)
+        foreach (Property property in itemSO.propertyList)
         {
             string propertyStr = "";
             string propertyName = "";
             switch (property.propertytype)
             {
-                case ItemPropertyType.Attack:
+                case PropertyType.Attack:
                     propertyName = "Attack + ";
                     break;
-                case ItemPropertyType.Speed:
+                case PropertyType.Speed:
                     propertyName = "Speed + ";
                     break;
-                case ItemPropertyType.HP:
+                case PropertyType.HP:
                     propertyName = "HP + ";
                     break;
-                case ItemPropertyType.MP:
+                case PropertyType.MP:
                     propertyName = "MP + ";
                     break;
-                case ItemPropertyType.Defence:
+                case PropertyType.Defence:
                     propertyName = "Def + ";
                     break;
             }

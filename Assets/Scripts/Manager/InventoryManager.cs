@@ -6,7 +6,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
 
-    public List<ItemSO> itemList = new List<ItemSO>();
+    public Dictionary<ItemSO, int> itemDictionary = new Dictionary<ItemSO, int>(); 
     private ItemDBSO itemDB;
 
     private void Awake()
@@ -24,10 +24,10 @@ public class InventoryManager : MonoBehaviour
     private void LoadItemDatabase()
     {
         Debug.Log("Attempting to load ItemDatabase...");
-        
+
         string resourcesPath = Path.Combine(Application.dataPath, "Resources");
         Debug.Log($"Resources path: {resourcesPath}");
-        
+
         if (Directory.Exists(resourcesPath))
         {
             Debug.Log("Resources folder found.");
@@ -52,16 +52,43 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(ItemSO item)
     {
-        itemList.Add(item);
-        BagUI.Instance.AddItem(item);
+        if (itemDictionary.ContainsKey(item))
+        {
+            itemDictionary[item]++;
+        }
+        else
+        {
+            itemDictionary[item] = 1;
+        }
+
+        if (item.id >= 1 && item.id <= 3)
+        {
+            BagUI.Instance.AddItemToBag(item); 
+        }
+        else if (item.id >= 4 && item.id <= 6)
+        {
+            Debug.Log($"Item ID {item.id} is reserved for InventoryUI.");
+        }
+        else
+        {
+            Debug.LogWarning($"Item ID {item.id} does not fall into BagUI or InventoryUI ranges.");
+        }
+
         Debug.Log($"Item {item.name} added to inventory.");
+
+        // Refresh UI to display the newly added item
+        InventoryUI.Instance.RefreshUI(); 
     }
 
     public void RemoveItem(ItemSO item)
     {
-        if (itemList.Contains(item))
+        if (itemDictionary.ContainsKey(item))
         {
-            itemList.Remove(item);
+            itemDictionary[item]--;
+            if (itemDictionary[item] <= 0)
+            {
+                itemDictionary.Remove(item);
+            }
             Debug.Log($"Item {item.name} removed from inventory.");
         }
         else
@@ -70,25 +97,37 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public int GetItemCount(ItemSO item)
+    {
+        if (itemDictionary.TryGetValue(item, out int count))
+        {
+            return count;
+        }
+        return 0; 
+    }
+
     public bool HasItem(ItemSO item)
     {
-        return itemList.Contains(item);
+        return itemDictionary.ContainsKey(item);
     }
 
     public List<int> GetSaveData()
     {
         List<int> itemIds = new List<int>();
-        foreach (ItemSO item in itemList)
+        foreach (var pair in itemDictionary)
         {
-            itemIds.Add(item.id);
+            for (int i = 0; i < pair.Value; i++)
+            {
+                itemIds.Add(pair.Key.id);
+            }
         }
         return itemIds;
     }
 
     public void LoadSaveData(List<int> savedItemIds)
     {
-        itemList.Clear();
-        
+        itemDictionary.Clear();
+
         if (itemDB == null)
         {
             LoadItemDatabase();
@@ -104,7 +143,7 @@ public class InventoryManager : MonoBehaviour
             ItemSO item = itemDB.itemlist.Find(i => i.id == itemId);
             if (item != null)
             {
-                itemList.Add(item);
+                AddItem(item); 
             }
             else
             {
@@ -112,6 +151,6 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"Loaded {itemList.Count} items into inventory.");
+        Debug.Log($"Loaded {itemDictionary.Count} items into inventory.");
     }
 }

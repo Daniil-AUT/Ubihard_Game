@@ -16,7 +16,7 @@ public class PlayerPick : MonoBehaviour
                 //currency
                 if (po.itemSO.itemType == ItemType.Currency)
                 {
-                    int currencyValue = po.itemSO.propertyList.Find(prop => prop.propertytype == ItemPropertyType.CurrencyValue)?.value ?? 0;
+                    int currencyValue = po.itemSO.propertyList.Find(prop => prop.propertytype == PropertyType.CurrencyValue)?.value ?? 0;
                     GetComponent<Player>().AddCurrency(currencyValue);
                 }
                 else

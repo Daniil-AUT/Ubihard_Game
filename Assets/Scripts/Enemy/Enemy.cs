@@ -4,13 +4,15 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public int HP = 100;
-   
     public int currencyReward = 20;
+    public int expReward = 50; // Experience points to reward when defeated
 
     public float detectionRange = 20.0f;
+
     private GameObject player;
     private Animator anim;
     private PlayerTargetLock playerTargetLock;
+    private NavMeshAgent enemyAgent;
 
     public enum EnemyState
     {
@@ -22,10 +24,13 @@ public class Enemy : MonoBehaviour
 
     private EnemyState currentState = EnemyState.NormalState;
     private EnemyState childState = EnemyState.RestingState;
-    private NavMeshAgent enemyAgent;
-
     public float restTime = 2;
     private float restTimer = 0;
+
+    public float attackDistance = 1.5f; // Distance to trigger attack
+    public float attackDamage = 10f;     // Amount of damage dealt to the player
+    private float attackCooldown = 1f;    // Cooldown between attacks
+    private float attackTimer = 0f;       // Timer to track cooldown
 
     void Start()
     {
@@ -34,16 +39,21 @@ public class Enemy : MonoBehaviour
         anim = GetComponent<Animator>();
         playerTargetLock = FindObjectOfType<PlayerTargetLock>();
     }
+
     void Update()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
         if (distanceToPlayer <= detectionRange)
         {
-            //currentState = EnemyState.FightingState;
             enemyAgent.SetDestination(player.transform.position);
+            if (distanceToPlayer <= attackDistance)
+            {
+                AttackPlayer();
+            }
         }
 
+        // State logic
         if (currentState == EnemyState.NormalState)
         {
             if (childState == EnemyState.RestingState)
@@ -66,11 +76,30 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+
+        // Example damage trigger for testing
         if (Input.GetKeyDown(KeyCode.Z))
         {
             TakeDamage(30);
         }
     }
+
+    void AttackPlayer()
+    {
+        attackTimer += Time.deltaTime;
+
+        if (attackTimer >= attackCooldown)
+        {
+            Player playerStats = player.GetComponent<Player>();
+            if (playerStats != null)
+            {
+                playerStats.TakeDamage(attackDamage); 
+            }
+            attackTimer = 0f; 
+            anim.SetTrigger("Attack"); 
+        }
+    }
+
     Vector3 FindRandomPosition()
     {
         Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
@@ -85,17 +114,16 @@ public class Enemy : MonoBehaviour
 
         if (HP <= 0)
         {
-            // Disable enemy's collider to prevent further interactions
             GetComponent<Collider>().enabled = false;
 
-            // Give currency to player when enemy dies
-            Player PlayerStat = FindObjectOfType<Player>();
-            if (PlayerStat != null)
+            // Give currency and experience to player when enemy dies
+            Player playerStats = FindObjectOfType<Player>();
+            if (playerStats != null)
             {
-                PlayerStat.AddCurrency(currencyReward);
+                playerStats.AddCurrency(currencyReward);
+                playerStats.GetComponent<PlayerXP>().AddEXP(expReward); 
             }
 
-            // Drop items when enemy dies
             DropLoot();
 
             if (playerTargetLock != null && playerTargetLock.currentTarget == transform)
@@ -105,30 +133,42 @@ public class Enemy : MonoBehaviour
                 playerTargetLock.targetIcon.gameObject.SetActive(false);
             }
 
-            // Destroy the enemy GameObject
             Destroy(gameObject);
         }
     }
+
     virtual protected void DropLoot()
     {
-        int count = Random.Range(1, 4); // Number of items to drop
+        int count = Random.Range(1, 6);
         for (int i = 0; i < count; i++)
         {
-            // Get a random item from the database
-            ItemSO item = ItemDBManager.Instance.GetRandomItem();
+            ItemSO item = null;
+
+            do
+            {
+                item = ItemDBManager.Instance.GetRandomItem();
+            }
+            while (item != null && item.id == 6);
 
             if (item != null && item.prefab != null)
             {
-                // Instantiate the item prefab
                 GameObject go = Instantiate(item.prefab, transform.position, Quaternion.identity);
-
-                // Set tag for the item (assuming Tag.INTERACTABLE is a defined tag in your project)
                 go.tag = "Interactable";
 
-                // Add PickableObject component and configure it
                 PickableObject po = go.AddComponent<PickableObject>();
                 po.itemSO = item;
             }
         }
+
+        Player playerStats = FindObjectOfType<Player>();
+        if (playerStats != null)
+        {
+            PlayerXP playerXP = playerStats.GetComponent<PlayerXP>();
+            if (playerXP != null)
+            {
+                playerXP.AddEXP(expReward); 
+            }
+        }
     }
+
 }

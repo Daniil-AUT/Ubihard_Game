@@ -8,10 +8,16 @@ public class EnemySpawner : MonoBehaviour
     public float spawnTime;
     private float spawnTimer;
 
+    private bool hasSpawned = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        SpawnEnemy();
+        if (!hasSpawned)
+        {
+            SpawnEnemy();
+            hasSpawned = true; 
+        }
     }
 
     // Update is called once per frame
@@ -28,6 +34,5 @@ public class EnemySpawner : MonoBehaviour
     void SpawnEnemy()
     {
         GameObject.Instantiate(enemyPrefab, transform.position, Quaternion.identity);
-
     }
 }
