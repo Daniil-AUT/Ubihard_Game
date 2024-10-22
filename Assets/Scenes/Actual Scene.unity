@@ -1398,6 +1398,7 @@ MonoBehaviour:
   HP: 100
   currencyReward: 20
   expReward: 50
+  playerStat: {fileID: 376595925}
   detectionRange: 5
   restTime: 2
   attackDistance: 1.5
@@ -6122,6 +6123,7 @@ MonoBehaviour:
   defenseText: {fileID: 1884387898}
   attackDamageText: {fileID: 1972985741}
   movementSpeedText: {fileID: 1644781974}
+  playerScript: {fileID: 376595925}
 --- !u!1 &586846926 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1232766363669618, guid: 2b519101e10d4a74580d4c86ac9e03e6, type: 3}
@@ -21519,6 +21521,7 @@ MonoBehaviour:
   HP: 400
   currencyReward: 300
   expReward: 400
+  playerStat: {fileID: 376595925}
   detectionRange: 50
   itemToDrop: {fileID: 11400000, guid: ae4464f2ead15a54fa4faa4af92ee3bf, type: 2}
   restTime: 2

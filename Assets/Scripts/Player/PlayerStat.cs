@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public float currentHealth;
     public int movementSpeed = 5;
     public int attackDamage = 20;
-    public int defense = 1;
+    public int defense = 5;
     public HealthBar healthBar;
     private bool isInvincible = false;
     public Vector3 playerPosition;
