@@ -6,7 +6,6 @@ public class Enemy : MonoBehaviour
     public int HP = 100;
     public int currencyReward = 20;
     public int expReward = 50; // Experience points to reward when defeated
-    public Player playerStat;
 
     public float detectionRange = 20.0f;
 
@@ -94,7 +93,7 @@ public class Enemy : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage((attackDamage)); 
+                playerStats.TakeDamage(attackDamage); 
             }
             attackTimer = 0f; 
             anim.SetTrigger("Attack"); 
@@ -109,7 +108,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        HP -= playerStat.attackDamage;
+        HP -= damage;
         Debug.Log("Enemy HP: " + HP);
         anim.SetTrigger("EnemyHit");
 

@@ -19,9 +19,11 @@ public class SaveLoadManagerTests
         dummySaveLoadManager.ClearSave();
     }
 
+    // Test for saving the game data
     [Test]
     public void SaveGame_SavePlayerData()
     {
+        // define some player data
         float playerHealth = 50f;
         int playerCurrency = 200;
         List<int> inventoryItemIDs = new List<int> { 1 };
@@ -32,6 +34,7 @@ public class SaveLoadManagerTests
         // asserting
         Assert.IsTrue(File.Exists(dummySaveLoadManager.SavePath), "Save file was not created.");
 
+        // reading the saved data
         SaveData savedData = dummySaveLoadManager.LoadGame();
 
         Assert.AreEqual(50f, savedData.playerHealth, "Player health was not saved correctly");
@@ -103,10 +106,11 @@ public class SaveLoadManagerTests
             }
             else
             {
-                return null; 
+                return null; // No save file found
             }
         }
 
+        // Method to clear the save file for testing purposes
         public void ClearSave()
         {
             if (File.Exists(SavePath))

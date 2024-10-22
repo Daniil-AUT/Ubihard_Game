@@ -16,12 +16,13 @@ public class PlayerStatsDisplay : MonoBehaviour
     private int currentMovementSpeed;
 
     // References to other components
-    public Player playerScript;
+    private Player playerScript;
     private PlayerController playerController;
 
     private void Start()
     {
         // Get references to required components
+        playerScript = FindObjectOfType<Player>();
         playerController = FindObjectOfType<PlayerController>();
 
         if (playerScript == null || playerController == null)
@@ -30,9 +31,10 @@ public class PlayerStatsDisplay : MonoBehaviour
             return;
         }
 
+        // Initialize current stats
         currentDefense = playerScript.defense;
         currentAttackDamage = playerScript.attackDamage;
-        currentMovementSpeed = Mathf.RoundToInt(playerScript.movementSpeed); 
+        currentMovementSpeed = Mathf.RoundToInt(playerScript.movementSpeed); // Explicit conversion
 
         // Initial UI update
         UpdateAllStatsDisplay();
@@ -50,15 +52,12 @@ public class PlayerStatsDisplay : MonoBehaviour
     public void UpdateDefense(int newDefense)
     {
         currentDefense = newDefense;
-        playerScript.defense = newDefense;
         UpdateDefenseDisplay();
     }
 
     public void UpdateAttackDamage(int newDamage)
     {
         currentAttackDamage = newDamage;
-        playerScript.attackDamage = newDamage;
-
         UpdateAttackDisplay();
     }
 

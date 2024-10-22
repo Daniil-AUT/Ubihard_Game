@@ -6,7 +6,7 @@ public class FinalBoss : MonoBehaviour
     public int HP = 400;
     public int currencyReward = 300;
     public int expReward = 400; 
-    public Player playerStat;
+
     public float detectionRange = 50.0f;
     public ItemSO itemToDrop;
     private GameObject player;
@@ -27,10 +27,10 @@ public class FinalBoss : MonoBehaviour
     public float restTime = 2;
     private float restTimer = 0;
 
-    public float attackDistance = 0.2f; // Distance to trigger attack
+    public float attackDistance = 2f; // Distance to trigger attack
     public float attackDamage = 20f;     // Amount of damage dealt to the player
     private float attackCooldown = 2f;    // Cooldown between attacks
-    private float attackTimer = 2f;       // Timer to track cooldown
+    private float attackTimer = 0f;       // Timer to track cooldown
 
     void Start()
     {
@@ -93,7 +93,7 @@ public class FinalBoss : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage(attackDamage - playerStats.defense);
+                playerStats.TakeDamage(attackDamage);
             }
             attackTimer = 0f;
             anim.SetTrigger("Attack");
@@ -108,7 +108,7 @@ public class FinalBoss : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        HP -= playerStat.attackDamage;
+        HP -= damage;
         Debug.Log("Enemy HP: " + HP);
         anim.SetTrigger("EnemyHit");
 
