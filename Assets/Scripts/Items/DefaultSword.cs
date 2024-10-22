@@ -30,9 +30,14 @@ public class DefaultSword : MonoBehaviour
         {
             Debug.Log("Enemy hit (" + weaponDamage + " dmg)");
             Enemy enemy = other.GetComponent<Enemy>();
+            FinalBoss boss = other.GetComponent<FinalBoss>();
             if (enemy != null)
             {
                 enemy.TakeDamage((int)weaponDamage);
+            }
+            if (boss != null)
+            {
+                boss.TakeDamage((int)weaponDamage);
             }
         }
     }

@@ -21,14 +21,14 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
-    bool isGrounded;
-    bool canJump = true;
+    private bool isGrounded;
+    private bool canJump = true;
     public bool isJumping = false;
     public Vector3 velocity;
     public bool isDodging = false;
     public bool isAttacking = false;
     public bool isInCombat = false;
-    float jumpTime;
+    private float jumpTime;
     public float jumpDuration = 1f;
     private bool isSpeedBoosted = false; 
     private Player playerScript;

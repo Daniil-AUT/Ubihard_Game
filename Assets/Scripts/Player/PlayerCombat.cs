@@ -4,24 +4,22 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
+    [SerializeField] float moveSpeed = 3f;
+    
     private Animator anim;
     private Transform currentTarget;
     private CharacterController controller;
-    
-    float speedSmoothVelocity;
-    float speedSmoothTime;
-    public float currentSpeed;
-    public bool isDodging;
-    public bool isInCombat;
-    Vector3 moveInput;
-    Vector3 dir;
-    
-    [SerializeField] float moveSpeed = 3f;
-
     private PlayerTargetLock targetLock;
     private PlayerController playerController;
     private Dodge dodge; 
-
+    
+    private float speedSmoothVelocity;
+    private float speedSmoothTime;
+    public float currentSpeed;
+    public bool isInCombat;
+    private Vector3 moveInput;
+    private Vector3 dir;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -74,7 +72,7 @@ public class PlayerCombat : MonoBehaviour
         anim.SetLayerWeight(anim.GetLayerIndex("CombatLayer"), 1);      
         anim.SetBool("IsInCombat", true); 
 
-        if(!isDodging)
+        if(!dodge.isDodging)
         {
         currentSpeed = Mathf.SmoothDamp(currentSpeed, moveSpeed, ref speedSmoothVelocity, speedSmoothTime * Time.deltaTime);
         
