@@ -125,13 +125,10 @@ public class Enemy : MonoBehaviour
             }
 
             DropLoot();
-
-            if (playerTargetLock != null && playerTargetLock.currentTarget == transform)
-            {
-                playerTargetLock.isTargeting = false;
-                playerTargetLock.currentTarget = null;
-                playerTargetLock.targetIcon.gameObject.SetActive(false);
-            }
+                       
+             playerTargetLock.isTargeting = false;
+             playerTargetLock.currentTarget = null;
+             playerTargetLock.targetIcon.gameObject.SetActive(false);
 
             Destroy(gameObject);
         }
