@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -65,9 +66,15 @@ public class InventoryManager : MonoBehaviour
         {
             BagUI.Instance.AddItemToBag(item); 
         }
+        else if (item.id >= 8)
+        {
+            BagUI.Instance.AddItemToBag(item);
+        }
         else if (item.id >= 4 && item.id <= 6)
         {
             Debug.Log($"Item ID {item.id} is reserved for InventoryUI.");
+            // Refresh UI to display the newly added item
+            InventoryUI.Instance.RefreshUI();
         }
         else
         {
@@ -75,9 +82,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"Item {item.name} added to inventory.");
-
-        // Refresh UI to display the newly added item
-        InventoryUI.Instance.RefreshUI(); 
+        
     }
 
     public void RemoveItem(ItemSO item)
@@ -152,5 +157,10 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"Loaded {itemDictionary.Count} items into inventory.");
+    }
+
+    public List<ItemSO> GetAllItems()
+    {
+        return itemDictionary.Keys.ToList(); //returns list of all items
     }
 }

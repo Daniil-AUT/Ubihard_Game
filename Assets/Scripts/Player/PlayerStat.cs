@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
     private Vector3 deathPosition;
-    private CharacterController characterController;
 
     public int level = 1;
     public int currentEXP = 0;
@@ -41,12 +40,6 @@ public class Player : MonoBehaviour
         if (animator == null)
         {
             Debug.LogError("Animator component not found on this GameObject or its children.");
-        }
-
-        characterController = GetComponent<CharacterController>();
-        if (characterController == null)
-        {
-            Debug.LogError("CharacterController component not found on this GameObject.");
         }
     }
 
@@ -90,7 +83,6 @@ public class Player : MonoBehaviour
     {
         isDead = true;
         deathPosition = transform.position; 
-
         if (animator != null)
         {
             animator.SetTrigger("Die");
@@ -135,7 +127,6 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(70.1f, 23f, 37.37f); 
         
         playerController.enabled = true; 
-
         
         if (animator != null)
         {
@@ -249,6 +240,5 @@ public class Player : MonoBehaviour
         playerController.ResetController(); 
     }
 }
-
 
 }
