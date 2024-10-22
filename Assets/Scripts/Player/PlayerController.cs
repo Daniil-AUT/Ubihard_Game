@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    private Vector3 deathPosition;
     public Vector2 movement;
     public float walkSpeed;
     public float sprintSpeed;
@@ -20,14 +21,14 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight;
     public float gravity;
     public AnimationCurve jumpCurve;
-    bool isGrounded;
-    bool canJump = true;
+    private bool isGrounded;
+    private bool canJump = true;
     public bool isJumping = false;
     public Vector3 velocity;
     public bool isDodging = false;
     public bool isAttacking = false;
     public bool isInCombat = false;
-    float jumpTime;
+    private float jumpTime;
     public float jumpDuration = 1f;
     private bool isSpeedBoosted = false; 
     private Player playerScript;
@@ -222,12 +223,6 @@ public class PlayerController : MonoBehaviour
 
         // Zero out velocity and stop any movement
         velocity = Vector3.zero;
-
-        // Play the death animation
-        if (anim != null)
-        {
-            anim.SetTrigger("Die");
-        }
 
     }
 

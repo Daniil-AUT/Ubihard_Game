@@ -125,13 +125,10 @@ public class Enemy : MonoBehaviour
             }
 
             DropLoot();
-
-            if (playerTargetLock != null && playerTargetLock.currentTarget == transform)
-            {
-                playerTargetLock.isTargeting = false;
-                playerTargetLock.currentTarget = null;
-                playerTargetLock.targetIcon.gameObject.SetActive(false);
-            }
+                       
+             playerTargetLock.isTargeting = false;
+             playerTargetLock.currentTarget = null;
+             playerTargetLock.targetIcon.gameObject.SetActive(false);
 
             Destroy(gameObject);
         }
@@ -139,7 +136,7 @@ public class Enemy : MonoBehaviour
 
     virtual protected void DropLoot()
     {
-        int count = Random.Range(1, 6);
+        int count = Random.Range(1, 4);
         for (int i = 0; i < count; i++)
         {
             ItemSO item = null;
