@@ -6,25 +6,23 @@ public class Dodge : MonoBehaviour
 {
     [SerializeField] AnimationCurve dodgeCurve;
 
-    PlayerController playerController;  
-    PlayerCombat playerCombat;
-    Animator anim;
-    CharacterController characterController;
-    PlayerAttack playerAttack;
-    PlayerCrouch playerCrouch;
+    private PlayerController playerController;  
+    private Animator anim;
+    private CharacterController characterController;
+    private PlayerAttack playerAttack;
+    private PlayerCrouch playerCrouch;
 
     public bool isDodging = false;
-    float dodgeTimer;
-    float dodgeDistance = 2f;
-    Vector2 dodgeDirectionInput; 
-    Vector3 dodgeDirection;
+    private float dodgeTimer;
+    private float dodgeDistance = 2f;
+    private Vector2 dodgeDirectionInput; 
+    private Vector3 dodgeDirection;
 
     void Start()
     {
         playerController = GetComponent<PlayerController>(); 
         anim = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
-        playerCombat = GetComponent<PlayerCombat>();
         playerAttack = GetComponent<PlayerAttack>(); 
         playerCrouch = GetComponent<PlayerCrouch>();
 
@@ -55,7 +53,6 @@ public class Dodge : MonoBehaviour
     IEnumerator Dodging()
     {
         isDodging = true;
-        playerCombat.isDodging = true;  
         playerController.isDodging = true;  
 
         Player player = GetComponent<Player>();
@@ -86,14 +83,12 @@ public class Dodge : MonoBehaviour
         }
 
         isDodging = false;
-        playerCombat.isDodging = false;  
         playerController.isDodging = false;  
     }
 
     IEnumerator DirectionalDodging(Vector2 directionInput, float distance)
 {
     isDodging = true;
-    playerCombat.isDodging = true;  
     playerController.isDodging = true;  
 
     Player player = GetComponent<Player>();
@@ -143,7 +138,6 @@ public class Dodge : MonoBehaviour
     }
 
     isDodging = false;
-    playerCombat.isDodging = false;  
     playerController.isDodging = false;  
 }
 
