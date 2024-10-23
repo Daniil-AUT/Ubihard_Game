@@ -34,7 +34,7 @@ public class PlayerStatsDisplay : MonoBehaviour
         // Initialize current stats
         currentDefense = playerScript.defense;
         currentAttackDamage = playerScript.attackDamage;
-        currentMovementSpeed = Mathf.RoundToInt(playerScript.movementSpeed); // Explicit conversion
+        currentMovementSpeed = Mathf.RoundToInt(playerScript.movementSpeed); 
 
         // Initial UI update
         UpdateAllStatsDisplay();
@@ -44,7 +44,7 @@ public class PlayerStatsDisplay : MonoBehaviour
     {
         if (playerController != null && currentMovementSpeed != Mathf.RoundToInt(playerController.currentSpeed))
         {
-            currentMovementSpeed = Mathf.RoundToInt(playerController.currentSpeed); // Explicit conversion
+            currentMovementSpeed = Mathf.RoundToInt(playerController.currentSpeed); 
             UpdateMovementSpeedDisplay();
         }
     }

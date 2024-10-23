@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
     {
         if (!isInvincible && !isDead)
         {
-            currentHealth -= (damage- defense);
+            currentHealth -= (damage - defense);
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.SetHealth(currentHealth);
             Debug.Log($"Player took damage: {damage}. Current health: {currentHealth}");
@@ -154,6 +154,18 @@ public class Player : MonoBehaviour
         currentCurrency += amount;
         Debug.Log($"Added {amount} of currency. Total currency: {currentCurrency}");
         UpdateCurrencyUI();
+    }
+
+    public void AddDefense(int amount)
+    {
+        defense += amount;
+        Debug.Log($"Added {amount} of defense. Total defense: {defense}");
+    }
+
+    public void AddAttack(int amount)
+    {
+        attackDamage += amount;
+        Debug.Log($"Added {amount} of attack damage. Total attack damage: {attackDamage}");
     }
 
     public void SpendCurrency(int amount)

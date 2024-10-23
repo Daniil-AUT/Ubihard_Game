@@ -176,7 +176,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (InventoryManager.Instance.HasItem(armorItem))
         {
-            playerStat.defense += 1;
+            playerStat.defense += 5;
             InventoryManager.Instance.RemoveItem(armorItem);
             RefreshUI();
             playerStatsDisplay.UpdateDefense(playerStat.defense);

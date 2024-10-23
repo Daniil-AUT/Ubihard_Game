@@ -3,10 +3,12 @@ using UnityEngine.AI;
 
 public class FinalBoss : MonoBehaviour
 {
-    public int HP = 100;
+    public int HP = 300;
     public int currencyReward = 20;
+    public int expReward = 300; 
 
     public float detectionRange = 20.0f;
+    public Player playerStat;
 
     private GameObject player;
     private Animator anim;
@@ -27,9 +29,9 @@ public class FinalBoss : MonoBehaviour
     private float restTimer = 0;
     public ItemSO itemToDrop;
 
-    public float attackDistance = 1.5f; // Distance to trigger attack
-    public float attackDamage = 10f;     // Amount of damage dealt to the player
-    private float attackCooldown = 1f;    // Cooldown between attacks
+    public float attackDistance = 2f; // Distance to trigger attack
+    public float attackDamage = 15f;     // Amount of damage dealt to the player
+    private float attackCooldown = 2f;    // Cooldown between attacks
     private float attackTimer = 0f;       // Timer to track cooldown
 
     // Controller fields
@@ -131,7 +133,7 @@ public class FinalBoss : MonoBehaviour
             Player playerStats = player.GetComponent<Player>();
             if (playerStats != null)
             {
-                playerStats.TakeDamage(attackDamage); // Player takes damage
+                playerStats.TakeDamage(attackDamage - playerStats.defense); // Player takes damage
             }
             attackTimer = 0f; // Reset the attack timer
             anim.SetTrigger("Attack"); // Trigger attack animation if available
@@ -146,7 +148,7 @@ public class FinalBoss : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        HP -= damage;
+        HP -= playerStat.attackDamage;
         Debug.Log("Enemy HP: " + HP);
         anim.SetTrigger("EnemyHit");
 
@@ -154,18 +156,19 @@ public class FinalBoss : MonoBehaviour
         {
             GetComponent<Collider>().enabled = false;
 
-            // Give currency to player when enemy dies
+            // Give currency and experience to player when enemy dies
             Player playerStats = FindObjectOfType<Player>();
             if (playerStats != null)
             {
                 playerStats.AddCurrency(currencyReward);
+                playerStats.GetComponent<PlayerXP>().AddEXP(expReward);
             }
 
             DropLoot();
 
-             playerTargetLock.isTargeting = false;
-             playerTargetLock.currentTarget = null;
-             playerTargetLock.targetIcon.gameObject.SetActive(false);
+            playerTargetLock.isTargeting = false;
+            playerTargetLock.currentTarget = null;
+            playerTargetLock.targetIcon.gameObject.SetActive(false);
 
             Destroy(gameObject);
         }

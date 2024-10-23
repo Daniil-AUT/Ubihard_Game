@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public float detectionRange = 20.0f;
 
     private GameObject player;
+    public Player playerStat;
     private Animator anim;
     private PlayerTargetLock playerTargetLock;
     private NavMeshAgent enemyAgent;
@@ -108,7 +109,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        HP -= damage;
+        HP -= playerStat.attackDamage;
         Debug.Log("Enemy HP: " + HP);
         anim.SetTrigger("EnemyHit");
 
