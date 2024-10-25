@@ -21,3 +21,5 @@ MonoBehaviour:
     value: 35
   icon: {fileID: 21300000, guid: 472e7bb6c10556f4db8796a0ca699a7c, type: 3}
   prefab: {fileID: 9209511623569385226, guid: 056a00a84a647fa44a7e6c2e3a2b6cf4, type: 3}
+  cost: 20
+  price: 20
